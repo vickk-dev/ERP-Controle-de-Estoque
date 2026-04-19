@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Menu from "./pages/Menu";
+import Login from "./pages/login";
 
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Menu />} />
+        <Route path="/" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
