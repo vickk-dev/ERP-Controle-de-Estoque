@@ -11,7 +11,9 @@ function Topbar() {
   return (
     <div style={styles.topbar}>
   
-      <img src="/imagens/logo.png" alt="Logo" style={styles.logo} />
+      <Link to="/">
+        <img src="/imagens/logo.png" alt="Logo" style={styles.logo} />
+      </Link>
 
       <div style={styles.hamburger} onClick={toggleMenu}>
         ☰
