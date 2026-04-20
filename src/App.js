@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Menu from "./pages/Menu";
+import Teste from "./pages/Teste";
 
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Menu />} />
+        <Route path="/" element={<Teste />} />
       </Routes>
     </BrowserRouter>
   );

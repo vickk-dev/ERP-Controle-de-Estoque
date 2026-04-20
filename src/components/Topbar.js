@@ -1,32 +1,83 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+// Substitua pelo seu contexto real, ex: import { useAuth } from "../contexts/AuthContext";
+// e use o setUser vindo de lá.
+// import { useAuth } from "../contexts/AuthContext";
 
 function Topbar() {
   const [aberto, setAberto] = useState(false);
+  const navigate = useNavigate();
 
-  const toggleMenu = () => {
-    setAberto(!aberto);
-  };
+  // const { setUser } = useAuth(); // descomente se usar Context API
+
+  const toggleMenu = () => setAberto((prev) => !prev);
+
+  function handleLogout() {
+    // 1. Remove o token do LocalStorage
+    localStorage.removeItem("@ERP_Ferramentas:token");
+
+    // 2. Limpa o usuário do contexto (descomente se usar Context API)
+    // setUser(null);
+
+    // 3. Redireciona para login substituindo o histórico,
+    //    impedindo o botão "Voltar" de retornar à rota protegida
+    navigate("/login", { replace: true });
+  }
 
   return (
     <div style={styles.topbar}>
-  
-      <img src="/imagens/logo.png" alt="Logo" style={styles.logo} />
 
-      <div style={styles.hamburger} onClick={toggleMenu}>
-        ☰
+      <Link to="/">
+        <img src="/imagens/logo.png" alt="Logo" style={styles.logo} />
+      </Link>
+
+      <div style={styles.direita}>
+        <button
+          onClick={handleLogout}
+          style={styles.logoutBtn}
+          title="Sair"
+          aria-label="Encerrar sessão"
+        >
+          <LogoutIcon />
+        </button>
+
+        <div style={styles.hamburger} onClick={toggleMenu} aria-label="Menu">
+          ☰
+        </div>
       </div>
 
       {aberto && (
         <div style={styles.menu}>
-          <Link to="/aluguel" style={styles.link}>Aluguel</Link>
-          <Link to="/clientes" style={styles.link}>Clientes</Link>
-          <Link to="/estoque" style={styles.link}>Estoque</Link>
-          <Link to="/pedidos" style={styles.link}>Pedidos</Link>
-          <Link to="/relatorio" style={styles.link}>Relatório</Link>
+          <Link to="/aluguel" style={styles.link} onClick={() => setAberto(false)}>Aluguel</Link>
+          <Link to="/clientes" style={styles.link} onClick={() => setAberto(false)}>Clientes</Link>
+          <Link to="/estoque" style={styles.link} onClick={() => setAberto(false)}>Estoque</Link>
+          <Link to="/pedidos" style={styles.link} onClick={() => setAberto(false)}>Pedidos</Link>
+          <Link to="/relatorio" style={styles.link} onClick={() => setAberto(false)}>Relatório</Link>
         </div>
       )}
     </div>
+  );
+}
+
+function LogoutIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
   );
 }
 
@@ -45,8 +96,24 @@ const styles = {
     zIndex: 1000,
   },
   logo: {
-  height: "40px",
-  objectFit: "contain",
+    height: "40px",
+    objectFit: "contain",
+  },
+  direita: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+  },
+  logoutBtn: {
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    color: "#333",
+    display: "flex",
+    alignItems: "center",
+    padding: "6px",
+    borderRadius: "6px",
+    transition: "background 0.15s",
   },
   hamburger: {
     fontSize: "28px",
