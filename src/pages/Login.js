@@ -1,9 +1,36 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
+async function fazerLogin(login, senha) {
+  const response = await fetch(`${API_BASE}/api/v1/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ login, senha }),
+    signal: AbortSignal.timeout(10000),
+  });
+
+  if (response.status === 401) {
+    throw { tipo: "credenciais", mensagem: "Usuario ou senha incorretos" };
+  }
+
+  if (!response.ok) {
+    throw { tipo: "servidor", mensagem: "Erro de conexao com o servidor. Tente novamente." };
+  }
+
+  return response.json();
+}
 
 function Login() {
   const [credenciais, setCredenciais] = useState({ usuario: "", senha: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [erroLocal, setErroLocal] = useState("");
+
+  const senhaRef = useRef(null);
+  const navigate = useNavigate();
+  const { salvarSessao } = useAuth();
 
   const camposValidos =
     credenciais.usuario.trim() !== "" && credenciais.senha.trim() !== "";
@@ -21,28 +48,36 @@ function Login() {
     setErroLocal("");
 
     try {
-      await new Promise((resolve, reject) =>
-        setTimeout(() => {
-          if (credenciais.usuario !== "admin" || credenciais.senha !== "1234") {
-            reject(new Error("Usuario ou senha invalidos."));
-          } else {
-            resolve();
-          }
-        }, 1500)
+      const dados = await fazerLogin(
+        credenciais.usuario.trim(),
+        credenciais.senha
       );
 
-      alert("Login realizado com sucesso!");
+      salvarSessao(dados.token, dados.usuario || null);
+      navigate("/dashboard", { replace: true });
     } catch (err) {
-      setErroLocal(err.message || "Erro ao tentar fazer login.");
+      if (err.tipo === "credenciais") {
+        setErroLocal(err.mensagem);
+        setCredenciais((prev) => ({ ...prev, senha: "" }));
+        setTimeout(() => senhaRef.current?.focus(), 0);
+      } else if (
+        err.name === "TimeoutError" ||
+        err.name === "AbortError" ||
+        err instanceof TypeError
+      ) {
+        setErroLocal("Erro de conexao com o servidor. Tente novamente.");
+      } else {
+        setErroLocal(
+          err.mensagem || "Erro de conexao com o servidor. Tente novamente."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSubmit();
-    }
+    if (e.key === "Enter") handleSubmit();
   };
 
   return (
@@ -107,6 +142,7 @@ function Login() {
             id="senha"
             name="senha"
             type="password"
+            ref={senhaRef}
             value={credenciais.senha}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
@@ -176,9 +212,7 @@ const styles = {
     gap: "10px",
     marginBottom: "18px",
   },
-  logoIcon: {
-    flexShrink: 0,
-  },
+  logoIcon: { flexShrink: 0 },
   logoTexto: {
     fontWeight: "700",
     fontSize: "16px",
@@ -192,10 +226,7 @@ const styles = {
     color: "#1a1a1a",
     letterSpacing: "2px",
   },
-  campoContainer: {
-    width: "100%",
-    marginBottom: "16px",
-  },
+  campoContainer: { width: "100%", marginBottom: "16px" },
   label: {
     display: "block",
     fontSize: "13px",
@@ -213,12 +244,8 @@ const styles = {
     outline: "none",
     boxSizing: "border-box",
     transition: "box-shadow 0.2s",
-    boxShadow: "0 0 0 2px transparent",
   },
-  inputDisabled: {
-    opacity: 0.6,
-    cursor: "not-allowed",
-  },
+  inputDisabled: { opacity: 0.6, cursor: "not-allowed" },
   erro: {
     width: "100%",
     color: "#c0392b",
@@ -245,10 +272,7 @@ const styles = {
     letterSpacing: "1px",
     transition: "background-color 0.2s, opacity 0.2s",
   },
-  botaoDisabled: {
-    opacity: 0.5,
-    cursor: "not-allowed",
-  },
+  botaoDisabled: { opacity: 0.5, cursor: "not-allowed" },
   spinnerContainer: {
     display: "flex",
     alignItems: "center",
