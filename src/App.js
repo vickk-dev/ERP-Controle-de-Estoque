@@ -1,14 +1,11 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Menu from "./pages/Menu";
-
+import React from 'react';
+import TelaFaturamentoLocacao from './pages/TelaLocacao'; // Importa a classe criada
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Menu />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="App">
+      <TelaFaturamentoLocacao />
+    </div>
   );
 }
 
