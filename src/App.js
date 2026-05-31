@@ -1,19 +1,18 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import RotaProtegida from "./components/RotaProtegida";
 import Login from "./pages/Login";
-//import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import CadastroCliente from "./pages/CadastroCliente";
 import CadastroEstoque from "./pages/CadastroEstoque";
 
 function CadastroClienteWrapper() {
   const navigate = useNavigate();
-  return <CadastroCliente onCancelar={() => navigate(-1)} />;
+  return <CadastroCliente onCancelar={() => navigate("/dashboard")} />;
 }
 
 function CadastroEstoqueWrapper() {
   const navigate = useNavigate();
-  return <CadastroEstoque onCancelar={() => navigate(-1)} />;
+  return <CadastroEstoque onCancelar={() => navigate("/dashboard")} />;
 }
 
 function App() {
@@ -22,27 +21,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-                    
-          <Route
-            path="/clientes/cadastro"
-            element={
-              <RotaProtegida>
-                <CadastroClienteWrapper />
-              </RotaProtegida>
-            }
-          />
-
-          <Route
-            path="/estoque/cadastro"
-            element={
-              <RotaProtegida>
-                <CadastroEstoqueWrapper />
-              </RotaProtegida>
-            }
-          />
-
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/clientes/cadastro" element={<CadastroClienteWrapper />} />
+          <Route path="/estoque/cadastro" element={<CadastroEstoqueWrapper />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
