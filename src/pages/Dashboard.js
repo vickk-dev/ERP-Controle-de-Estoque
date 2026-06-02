@@ -13,6 +13,7 @@ function Dashboard() {
   const menus = [
     { label: "Clientes", sub: "Cadastrar cliente", rota: "/clientes/cadastro", icon: "👤" },
     { label: "Estoque", sub: "Cadastrar item", rota: "/estoque/cadastro", icon: "🔧" },
+    { label: "Relatorio", sub: "Faturamento por periodo", rota: "/relatorio", icon: "📊" },
   ];
 
   return (
