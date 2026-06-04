@@ -1,277 +1,772 @@
-/* Configurações Globais */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.App {
+  text-align: center;
 }
 
-.app-container {
-  background-color: #FDF9E6; /* Fundo bege clarinho da imagem */
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
   min-height: 100vh;
-  padding-bottom: 40px;
-}
-
-/* Header */
-.header {
-  background-color: #FFD700; /* Amarelo característico */
-  padding: 15px 40px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.logo-icon {
-  background-color: #003366;
-  color: #FFD700;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;
-}
-
-.header h1 {
-  font-size: 24px;
-  color: #222;
-  font-weight: 800;
-}
-
-/* Container Principal */
-.main-content {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-/* Barra de Ações */
-.actions-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.filters {
-  display: flex;
-  gap: 15px;
-}
-
-.input-search {
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  outline: none;
-  width: 250px;
-  font-size: 14px;
-}
-
-.btn-filter {
-  background-color: #003366;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 25px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
-}
-
-.btn-filter:hover {
-  background-color: #002244;
-}
-
-.btn-add-main {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: 0.2s;
-}
-
-.btn-add-main:hover {
-  background-color: #218838;
-}
-
-/* Tabela - Estilo Sistema Web (Sem cara de Excel) */
-.table-container {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-  overflow: hidden;
-}
-
-.estoque-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.estoque-table th {
-  background-color: #003366;
-  color: white;
-  padding: 15px;
-  text-align: left;
-  font-size: 14px;
-  letter-spacing: 1px;
-}
-
-.estoque-table td {
-  padding: 15px;
-  border-bottom: 1px solid #f0f0f0;
-  color: #444;
-}
-
-.estoque-table tr:hover {
-  background-color: #f9f9f9;
-}
-
-.estoque-table tr:last-child td {
-  border-bottom: none;
-}
-
-/* Badges (bolinhas de estoque) */
-.badge-normal {
-  color: #333;
-  font-weight: 500;
-}
-
-.badge-danger {
-  background-color: #FF4444;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-weight: bold;
-}
-
-/* Paginação */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  margin-top: 25px;
-  font-size: 18px;
-  color: #333;
-}
-
-.page-number {
-  cursor: pointer;
-}
-
-.page-number.active {
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-.page-arrow {
-  cursor: pointer;
-  font-weight: bold;
-}
-
-/* Modal / Pop-up */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: #E2DFCE; /* Fundo do modal da sua imagem */
-  border-radius: 8px;
-  width: 550px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  overflow: hidden;
-}
-
-.modal-header {
-  background-color: #003366;
-  color: #FFD700;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h2 {
-  font-size: 18px;
-  margin: 0;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.modal-body {
-  padding: 25px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.full-width {
-  grid-column: 1 / -1;
-}
-
-.form-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
 
-.form-group label {
-  color: #444;
-  font-size: 14px;
+.App-link {
+  color: #61dafb;
 }
 
-.form-group input {
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  background-color: #F5F3E9;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-  outline: none;
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.form-group input:focus {
-  border: 1px solid #003366;
+/* Estoque.js */
+
+import React, { useState } from 'react';
+import './App.css';
+
+export default function ControleEstoque() {
+  // Dados iniciais baseados na sua imagem (Já ajustados para o novo formato de ID)
+  const [estoque, setEstoque] = useState([
+    { id: 'FER-A1B2', nome: 'Furadeira de Impacto GSB 18V', marca: 'Boasc', estoque: 15, precoDia: 25.0 },
+    { id: 'FER-X9C3', nome: 'Martelo Perfurador SDS-Plus D25133', marca: 'Dewalt', estoque: 3, precoDia: 40.0 },
+    { id: 'FER-M4N5', nome: 'Serra Circular M5801B', marca: 'Makita', estoque: 8, precoDia: 35.0 },
+    { id: 'FER-P7Q8', nome: 'Jogo de Chave de Fenda Pro', marca: 'Stanley', estoque: 12, precoDia: 10.0 },
+    { id: 'FER-Z2W1', nome: 'Esmerilhadeira Angular DWE4120', marca: 'Dewalt', estoque: 5, precoDia: 45.0 },
+  ]);
+
+  const [busca, setBusca] = useState('');
+  const [filtroMarca, setFiltroMarca] = useState('');
+  const [modalAberto, setModalAberto] = useState(false);
+
+  // Campos do formulário de cadastro
+  const [novoItem, setNovoItem] = useState({
+    nome: '',
+    marca: '',
+    precoDia: '',
+    quantidade: ''
+  });
+
+  const handleCadastrar = (e) => {
+    e.preventDefault();
+    
+    // NOVO GERADOR DE ID: Cria um código como FER-X9A2
+    const codigoAleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const idGerado = `FER-${codigoAleatorio}`;
+    
+    setEstoque([...estoque, {
+      id: idGerado,
+      nome: novoItem.nome,
+      marca: novoItem.marca,
+      estoque: parseInt(novoItem.quantidade) || 0,
+      precoDia: parseFloat(novoItem.precoDia) || 0
+    }]);
+    
+    // Limpa e fecha o modal
+    setNovoItem({ nome: '', marca: '', precoDia: '', quantidade: '' });
+    setModalAberto(false);
+  };
+
+  const itensFiltrados = estoque.filter(item =>
+    item.nome.toLowerCase().includes(busca.toLowerCase()) &&
+    item.marca.toLowerCase().includes(filtroMarca.toLowerCase())
+  );
+
+  return (
+    <div className="app-container">
+      {/* Cabeçalho */}
+      <header className="header">
+        <div className="logo-container">
+          <div className="logo-icon">🔧</div>
+          <h1>O FERRAMENTEIRO</h1>
+        </div>
+      </header>
+
+      {/* Conteúdo Principal */}
+      <main className="main-content">
+        
+        {/* Barra de Ações e Filtros */}
+        <div className="actions-bar">
+          <div className="filters">
+            <input 
+              type="text" 
+              placeholder="Pesquisar ferramenta... 🔍" 
+              className="input-search"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
+            <input 
+              type="text" 
+              placeholder="Marca 🔍" 
+              className="input-search"
+              value={filtroMarca}
+              onChange={(e) => setFiltroMarca(e.target.value)}
+            />
+            <button className="btn-filter">Filtro</button>
+          </div>
+          
+          <button className="btn-add-main" onClick={() => setModalAberto(true)}>
+            + Cadastrar Item
+          </button>
+        </div>
+
+        {/* Tabela de Estoque */}
+        <div className="table-container">
+          <table className="estoque-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>FERRAMENTAS</th>
+                <th>MARCAS</th>
+                <th style={{textAlign: 'center'}}>ESTOQUE</th>
+              </tr>
+            </thead>
+            <tbody>
+              {itensFiltrados.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.id}</td>
+                  <td>{item.nome}</td>
+                  <td>{item.marca}</td>
+                  <td style={{textAlign: 'center'}}>
+                    {/* Regra de cor para o badge (menos estilo excel, mais moderno) */}
+                    <span className={item.estoque <= 5 ? 'badge-danger' : 'badge-normal'}>
+                      {item.estoque}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Paginação Mockada */}
+        <div className="pagination">
+          <span>Página: </span>
+          <span className="page-arrow">{'<'}</span>
+          <span className="page-number active">1</span>
+          <span className="page-number">2</span>
+          <span className="page-number">3</span>
+          <span className="page-arrow">{'>'}</span>
+        </div>
+      </main>
+
+      {/* Pop-up (Modal) de Cadastro */}
+      {modalAberto && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Cadastro de Item</h2>
+              <button className="close-btn" onClick={() => setModalAberto(false)}>X</button>
+            </div>
+            
+            <form onSubmit={handleCadastrar} className="modal-body">
+              <div className="form-group full-width">
+                <label>Nome da Ferramenta</label>
+                <input 
+                  type="text" 
+                  required
+                  value={novoItem.nome}
+                  onChange={(e) => setNovoItem({...novoItem, nome: e.target.value})}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Marca</label>
+                <input 
+                  type="text" 
+                  required
+                  value={novoItem.marca}
+                  onChange={(e) => setNovoItem({...novoItem, marca: e.target.value})}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Quantidade</label>
+                <input 
+                  type="number" 
+                  required
+                  value={novoItem.quantidade}
+                  onChange={(e) => setNovoItem({...novoItem, quantidade: e.target.value})}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Preço por Dia (R$)</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  required
+                  value={novoItem.precoDia}
+                  onChange={(e) => setNovoItem({...novoItem, precoDia: e.target.value})}
+                />
+              </div>
+
+              <div className="modal-footer full-width">
+                <button type="submit" className="btn-submit">+ Adicionar item</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-.modal-footer {
+\* AutenticaçãoApi */
+
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
+async function fazerLogin(login, senha) {
+  const response = await fetch(`${API_BASE}/api/v1/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ login, senha }),
+    signal: AbortSignal.timeout(10000),
+  });
+
+  if (response.status === 401) {
+    throw { tipo: "credenciais", mensagem: "Usuario ou senha incorretos" };
+  }
+
+  if (!response.ok) {
+    throw { tipo: "servidor", mensagem: "Erro de conexao com o servidor. Tente novamente." };
+  }
+
+  return response.json();
+}
+
+function Login() {
+  const [credenciais, setCredenciais] = useState({ usuario: "", senha: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [erroLocal, setErroLocal] = useState("");
+
+  const senhaRef = useRef(null);
+  const navigate = useNavigate();
+  const { salvarSessao } = useAuth();
+
+  const camposValidos =
+    credenciais.usuario.trim() !== "" && credenciais.senha.trim() !== "";
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCredenciais((prev) => ({ ...prev, [name]: value }));
+    if (erroLocal) setErroLocal("");
+  };
+
+  const handleSubmit = async () => {
+    if (!camposValidos || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setErroLocal("");
+
+    try {
+      const dados = await fazerLogin(
+        credenciais.usuario.trim(),
+        credenciais.senha
+      );
+
+      salvarSessao(dados.token, dados.usuario || null);
+      navigate("/dashboard", { replace: true });
+    } catch (err) {
+      if (err.tipo === "credenciais") {
+        setErroLocal(err.mensagem);
+        setCredenciais((prev) => ({ ...prev, senha: "" }));
+        setTimeout(() => senhaRef.current?.focus(), 0);
+      } else if (
+        err.name === "TimeoutError" ||
+        err.name === "AbortError" ||
+        err instanceof TypeError
+      ) {
+        setErroLocal("Erro de conexao com o servidor. Tente novamente.");
+      } else {
+        setErroLocal(
+          err.mensagem || "Erro de conexao com o servidor. Tente novamente."
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSubmit();
+  };
+
+  return (
+    <div style={styles.fundo}>
+      <div style={styles.card}>
+
+        <div style={styles.logoContainer}>
+          <div style={styles.logoIcon}>
+            <svg
+              viewBox="0 0 40 40"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ width: 40, height: 40 }}
+            >
+              <circle cx="20" cy="20" r="20" fill="#1a2a5e" />
+              <path
+                d="M12 20 C12 15, 16 11, 20 11 C24 11, 28 15, 28 20 C28 25, 24 29, 20 29 C16 29, 12 25, 12 20Z"
+                fill="none"
+                stroke="white"
+                strokeWidth="2.5"
+              />
+              <path
+                d="M20 11 L20 8 M20 29 L20 32 M11 20 L8 20 M29 20 L32 20"
+                stroke="white"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <circle cx="20" cy="20" r="3" fill="white" />
+            </svg>
+          </div>
+          <span style={styles.logoTexto}>O FERRAMENTEIRO</span>
+        </div>
+
+        <h2 style={styles.titulo}>LOGIN</h2>
+
+        <div style={styles.campoContainer}>
+          <label style={styles.label} htmlFor="usuario">
+            Usuario
+          </label>
+          <input
+            id="usuario"
+            name="usuario"
+            type="text"
+            value={credenciais.usuario}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            disabled={isSubmitting}
+            style={{
+              ...styles.input,
+              ...(isSubmitting ? styles.inputDisabled : {}),
+            }}
+            autoComplete="username"
+            autoFocus
+          />
+        </div>
+
+        <div style={styles.campoContainer}>
+          <label style={styles.label} htmlFor="senha">
+            Senha
+          </label>
+          <input
+            id="senha"
+            name="senha"
+            type="password"
+            ref={senhaRef}
+            value={credenciais.senha}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            disabled={isSubmitting}
+            style={{
+              ...styles.input,
+              ...(isSubmitting ? styles.inputDisabled : {}),
+            }}
+            autoComplete="current-password"
+          />
+        </div>
+
+        {erroLocal && <p style={styles.erro}>{erroLocal}</p>}
+
+        <button
+          onClick={handleSubmit}
+          disabled={!camposValidos || isSubmitting}
+          style={{
+            ...styles.botao,
+            ...(!camposValidos || isSubmitting ? styles.botaoDisabled : {}),
+          }}
+          aria-busy={isSubmitting}
+        >
+          {isSubmitting ? (
+            <span style={styles.spinnerContainer}>
+              <span style={styles.spinner} /> Aguarde...
+            </span>
+          ) : (
+            "Entrar"
+          )}
+        </button>
+      </div>
+
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+const styles = {
+  fundo: {
+    minHeight: "100vh",
+    backgroundColor: "#FFD600",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontFamily: "'Segoe UI', 'Roboto', sans-serif",
+  },
+  card: {
+    backgroundColor: "#e8e8e8",
+    borderRadius: "10px",
+    padding: "36px 40px 40px",
+    width: "100%",
+    maxWidth: "340px",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  logoContainer: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "18px",
+  },
+  logoIcon: { flexShrink: 0 },
+  logoTexto: {
+    fontWeight: "700",
+    fontSize: "16px",
+    color: "#1a1a1a",
+    letterSpacing: "0.5px",
+  },
+  titulo: {
+    margin: "0 0 22px 0",
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#1a1a1a",
+    letterSpacing: "2px",
+  },
+  campoContainer: { width: "100%", marginBottom: "16px" },
+  label: {
+    display: "block",
+    fontSize: "13px",
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: "5px",
+  },
+  input: {
+    width: "100%",
+    padding: "8px 10px",
+    fontSize: "14px",
+    border: "none",
+    borderRadius: "4px",
+    backgroundColor: "#ffffff",
+    outline: "none",
+    boxSizing: "border-box",
+    transition: "box-shadow 0.2s",
+  },
+  inputDisabled: { opacity: 0.6, cursor: "not-allowed" },
+  erro: {
+    width: "100%",
+    color: "#c0392b",
+    backgroundColor: "#fde8e8",
+    border: "1px solid #e0a0a0",
+    borderRadius: "4px",
+    padding: "8px 10px",
+    fontSize: "13px",
+    marginBottom: "12px",
+    textAlign: "center",
+    boxSizing: "border-box",
+  },
+  botao: {
+    width: "100%",
+    padding: "10px",
+    backgroundColor: "#1a2a5e",
+    color: "#ffffff",
+    fontSize: "14px",
+    fontWeight: "700",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    marginTop: "6px",
+    letterSpacing: "1px",
+    transition: "background-color 0.2s, opacity 0.2s",
+  },
+  botaoDisabled: { opacity: 0.5, cursor: "not-allowed" },
+  spinnerContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+  },
+  spinner: {
+    display: "inline-block",
+    width: "14px",
+    height: "14px",
+    border: "2px solid rgba(255,255,255,0.4)",
+    borderTopColor: "#ffffff",
+    borderRadius: "50%",
+    animation: "spin 0.7s linear infinite",
+  },
+};
+
+export default Login;
+
+/* Cliente */
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
   display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
 
-.btn-submit {
-  background-color: #003366;
-  color: #FFD700;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
+.App-link {
+  color: #61dafb;
 }
 
-.btn-submit:hover {
-  background-color: #002244;
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Logout */
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+\* Menu */
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Aluguel */
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pedidos */
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Relatorios */
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
