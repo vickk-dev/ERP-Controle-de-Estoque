@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './App.css';
 
 export default function ControleEstoque() {
   // Dados iniciais baseados na sua imagem (Já ajustados para o novo formato de ID)

@@ -6,6 +6,9 @@ export default function Aluguel() {
     { id: 'LOC-1030', cliente: 'Construtora Alfa', ferramenta: 'Betoneira 400L', retirada: '15/09/2023', devolucao: '15/10/2023', status: 'Atrasado' },
   ]);
 
+  // 1. Criamos a variável que controla se a telinha está aberta ou fechada
+  const [modalAberto, setModalAberto] = useState(false);
+
   return (
     <>
       <header className="page-header">
@@ -21,7 +24,10 @@ export default function Aluguel() {
             <input type="text" placeholder="Buscar contrato..." className="input-search" />
             <button className="btn-filter">Buscar</button>
           </div>
-          <button className="btn-add-main">+ Nova Locação</button>
+          {/* 2. Adicionamos o evento onClick para abrir o Modal quando clicar */}
+          <button className="btn-add-main" onClick={() => setModalAberto(true)}>
+            + Nova Locação
+          </button>
         </div>
 
         <div className="table-container">
@@ -55,6 +61,48 @@ export default function Aluguel() {
           </table>
         </div>
       </main>
+
+      {/* 3. A estrutura do Modal de Locação colocada no final */}
+      {modalAberto && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Nova Locação</h2>
+              <button className="close-btn" onClick={() => setModalAberto(false)}>X</button>
+            </div>
+            
+            <div className="modal-body">
+              <div className="form-group full-width">
+                <label>Cliente</label>
+                <input type="text" placeholder="Digite o nome do cliente" />
+              </div>
+              
+              <div className="form-group full-width">
+                <label>Ferramenta</label>
+                <input type="text" placeholder="Qual ferramenta?" />
+              </div>
+
+              <div style={{ display: 'flex', gap: '15px' }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Data de Retirada</label>
+                  <input type="date" />
+                </div>
+                
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Data de Devolução</label>
+                  <input type="date" />
+                </div>
+              </div>
+
+              <div className="modal-footer full-width" style={{ marginTop: '20px' }}>
+                <button className="btn-submit" onClick={() => setModalAberto(false)}>
+                  + Confirmar Locação
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
