@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import logoImg from '../imagens/logo.png'; // IMPORTANDO A LOGO
 
 const SENHA_MINIMA = 6;
 
@@ -66,6 +67,9 @@ function Login() {
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <div style={STYLES.fundo}>
         <div style={STYLES.card}>
+          <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+            <img src={logoImg} alt="Logo O Ferramenteiro" style={{ width: 72, height: 72, objectFit: 'contain' }} />
+          </div>
           <h2 style={STYLES.titulo}>O FERRAMENTEIRO</h2>
           <form onSubmit={handleSubmit}>
             <div style={STYLES.field}>

@@ -8,14 +8,9 @@ export default function Pedidos() {
 
   return (
     <>
-      <header className="page-header">
-        <div className="logo-container">
-          <div className="logo-icon">💲</div>
-          <h1>BAIXA DE PEDIDOS</h1>
-        </div>
-      </header>
-
-      <main className="main-content">
+      <main className="main-content" style={{ marginTop: '80px', padding: '0 20px' }}>
+        <h2 style={{ color: '#1a2a5e', marginBottom: '20px' }}>BAIXA DE PEDIDOS</h2>
+        
         <div className="actions-bar">
           <div className="filters">
             <input type="text" placeholder="Número do Pedido..." className="input-search" />

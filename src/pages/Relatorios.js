@@ -24,7 +24,6 @@ function RelatorioFaturamento({ onVoltar }) {
   const [contratos, setContratos] = useState(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
-  const [menuAberto, setMenuAberto] = useState(false);
   const { token } = useAuth();
 
   const dataFinalMenor = dataFinal && dataInicial && dataFinal < dataInicial;
@@ -60,7 +59,7 @@ function RelatorioFaturamento({ onVoltar }) {
       if (err.name === "TimeoutError" || err.name === "AbortError") {
         setErro("Tempo de resposta excedido. Tente novamente.");
       } else {
-        setErro(err.message || "Erro de conexao com o servidor.");
+        setErro(err.message || "Erro de conexão com o servidor.");
       }
       setContratos(null);
     } finally {
@@ -72,36 +71,13 @@ function RelatorioFaturamento({ onVoltar }) {
 
   return (
     <div style={s.pagina}>
-      <div style={s.topbar}>
-        <div style={s.topbarEsq}>
-          <svg viewBox="0 0 40 40" fill="none" style={{ width: 32, height: 32, flexShrink: 0 }}>
-            <circle cx="20" cy="20" r="20" fill="#1a2a5e" />
-            <path d="M12 20 C12 15,16 11,20 11 C24 11,28 15,28 20 C28 25,24 29,20 29 C16 29,12 25,12 20Z"
-              fill="none" stroke="white" strokeWidth="2.5" />
-            <path d="M20 11 L20 8 M20 29 L20 32 M11 20 L8 20 M29 20 L32 20"
-              stroke="white" strokeWidth="2.5" strokeLinecap="round" />
-            <circle cx="20" cy="20" r="3" fill="white" />
-          </svg>
-          <span style={s.topbarNome}>O FERRAMENTEIRO</span>
-        </div>
-        <span style={s.topbarTitulo}>Relatorio de Faturamento</span>
-        <div style={s.hamburger} onClick={() => setMenuAberto(!menuAberto)}>
-          <span style={s.hambLine} />
-          <span style={s.hambLine} />
-          <span style={s.hambLine} />
-        </div>
-        {menuAberto && (
-          <div style={s.dropMenu}>
-            <button style={s.dropItem} onClick={onVoltar}>Voltar</button>
-          </div>
-        )}
-      </div>
-
       <div style={s.conteudo}>
+        
+        <h2 style={s.tituloPagina}>Relatório de Faturamento</h2>
 
         <div style={s.cardFiltro}>
           <div style={s.cardHeader}>
-            <span style={s.cardHeaderTexto}>Consultar por Periodo</span>
+            <span style={s.cardHeaderTexto}>Consultar por Período</span>
           </div>
           <div style={s.filtroCorpo}>
             <div style={s.filtroLinha}>
@@ -151,7 +127,7 @@ function RelatorioFaturamento({ onVoltar }) {
         {!loading && !erro && contratos !== null && contratos.length === 0 && (
           <div style={s.estadoCentro}>
             <span style={s.estadoIcone}>📋</span>
-            <span style={s.estadoTexto}>Nenhum contrato encontrado no periodo informado.</span>
+            <span style={s.estadoTexto}>Nenhum contrato encontrado no período informado.</span>
           </div>
         )}
 
@@ -161,7 +137,7 @@ function RelatorioFaturamento({ onVoltar }) {
               <span style={{ ...s.thCol, flex: 1 }}>Nº Contrato</span>
               <span style={{ ...s.thCol, flex: 2 }}>Cliente</span>
               <span style={{ ...s.thCol, flex: 2 }}>Ferramenta</span>
-              <span style={{ ...s.thCol, flex: 1 }}>Data Inicio</span>
+              <span style={{ ...s.thCol, flex: 1 }}>Data Início</span>
               <span style={{ ...s.thCol, flex: 1 }}>Data Fim</span>
               <span style={{ ...s.thCol, flex: 1, textAlign: "right" }}>Valor</span>
             </div>
@@ -191,7 +167,7 @@ function RelatorioFaturamento({ onVoltar }) {
         {!loading && !erro && contratos === null && (
           <div style={s.estadoCentro}>
             <span style={s.estadoIcone}>🔍</span>
-            <span style={s.estadoTexto}>Selecione o periodo e clique em Buscar.</span>
+            <span style={s.estadoTexto}>Selecione o período e clique em Buscar.</span>
           </div>
         )}
 
@@ -205,15 +181,9 @@ function RelatorioFaturamento({ onVoltar }) {
 }
 
 const s = {
-  topbar: { position: "relative", backgroundColor: "#FFD600", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px" },
-  topbarEsq: { display: "flex", alignItems: "center", gap: 8 },
-  topbarNome: { fontWeight: "700", fontSize: 13, color: "#1a1a1a" },
-  topbarTitulo: { fontWeight: "600", fontSize: 15, color: "#1a1a1a" },
-  hamburger: { display: "flex", flexDirection: "column", gap: 5, cursor: "pointer", padding: 4 },
-  hambLine: { display: "block", width: 24, height: 3, backgroundColor: "#1a2a5e", borderRadius: 2 },
-  dropMenu: { position: "absolute", top: 52, right: 0, backgroundColor: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", borderRadius: "0 0 6px 6px", zIndex: 100, minWidth: 140 },
-  dropItem: { display: "block", width: "100%", padding: "10px 16px", background: "none", border: "none", textAlign: "left", cursor: "pointer", fontSize: 14, color: "#333" },
-  conteudo: { padding: "16px 14px", maxWidth: 960, margin: "0 auto", display: "flex", flexDirection: "column", gap: 14 },
+  pagina: { backgroundColor: "#f4f4f9", minHeight: "100vh" },
+  conteudo: { padding: "0 14px 20px", maxWidth: 960, margin: "80px auto 20px", display: "flex", flexDirection: "column", gap: 14 },
+  tituloPagina: { fontSize: "24px", fontWeight: "700", color: "#1a2a5e", marginBottom: "10px" },
   cardFiltro: { backgroundColor: "#c8c8a8", borderRadius: 6, overflow: "hidden", boxShadow: "0 1px 6px rgba(0,0,0,0.1)" },
   cardHeader: { backgroundColor: "#1a2a5e", padding: "8px 16px", textAlign: "center" },
   cardHeaderTexto: { color: "#FFD600", fontWeight: "700", fontSize: 14 },

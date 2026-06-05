@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
 
+// IMPORTANDO AS IMAGENS
+import imgAluguel from '../imagens/aluguel.png';
+import imgCliente from '../imagens/cliente.png';
+import imgEstoque from '../imagens/estoque.png';
+import imgPedidos from '../imagens/pedidos.png';
+import imgRelatorios from '../imagens/relatorios.png';
+
 function Menu() {
   return (
     <div>
@@ -9,29 +16,29 @@ function Menu() {
         <div style={styles.gridTop}>
         
         <Link to="/aluguel" style={styles.card}>
-        <img src="/imagens/aluguel.png" style={styles.img} alt="Aluguel" />
+        <img src={imgAluguel} style={styles.img} alt="Aluguel" />
         <span>Aluguel</span>
         </Link>
 
         <Link to="/clientes" style={styles.card}>
-        <img src="/imagens/cliente.png" style={styles.img} alt="Cliente" />
+        <img src={imgCliente} style={styles.img} alt="Cliente" />
         <span>Cadastro de Cliente</span>
         </Link>
 
         <Link to="/estoque" style={styles.card}>
-        <img src="/imagens/estoque.png" style={styles.img} alt="Estoque" />
+        <img src={imgEstoque} style={styles.img} alt="Estoque" />
         <span>Consultar Estoque</span>
         </Link>
         </div>
 
         <div style={styles.gridBottom}>
         <Link to="/pedidos" style={styles.card}>
-        <img src="/imagens/pedidos.png" style={styles.img} alt="Pedidos" />
+        <img src={imgPedidos} style={styles.img} alt="Pedidos" />
         <span>Consultar Pedidos</span>
         </Link>
 
         <Link to="/relatorio" style={styles.card}>
-        <img src="/imagens/relatorios.png" style={styles.img} alt="Relatório" />
+        <img src={imgRelatorios} style={styles.img} alt="Relatório" />
         <span>Relatório de Locações</span>
         </Link>
         </div>

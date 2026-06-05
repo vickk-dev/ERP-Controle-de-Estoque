@@ -5,34 +5,17 @@ const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 // Mascaras
 function aplicarMascaraCPF(valor) {
-  return valor
-    .replace(/\D/g, "")
-    .slice(0, 11)
-    .replace(/(\d{3})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  return valor.replace(/\D/g, "").slice(0, 11).replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
 
 function aplicarMascaraCNPJ(valor) {
-  return valor
-    .replace(/\D/g, "")
-    .slice(0, 14)
-    .replace(/(\d{2})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d)/, "$1/$2")
-    .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+  return valor.replace(/\D/g, "").slice(0, 14).replace(/(\d{2})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1/$2").replace(/(\d{4})(\d{1,2})$/, "$1-$2");
 }
 
 function aplicarMascaraTelefone(valor) {
   const digits = valor.replace(/\D/g, "").slice(0, 11);
-  if (digits.length <= 10) {
-    return digits
-      .replace(/(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d{4})(\d{1,4})$/, "$1-$2");
-  }
-  return digits
-    .replace(/(\d{2})(\d)/, "($1) $2")
-    .replace(/(\d{5})(\d{1,4})$/, "$1-$2");
+  if (digits.length <= 10) return digits.replace(/(\d{2})(\d)/, "($1) $2").replace(/(\d{4})(\d{1,4})$/, "$1-$2");
+  return digits.replace(/(\d{2})(\d)/, "($1) $2").replace(/(\d{5})(\d{1,4})$/, "$1-$2");
 }
 
 // Validacoes matematicas
@@ -55,12 +38,8 @@ function validarCNPJ(cnpj) {
   const d = cnpj.replace(/\D/g, "");
   if (d.length !== 14 || /^(\d)\1+$/.test(d)) return false;
   const calc = (n) => {
-    let soma = 0;
-    let pos = n - 7;
-    for (let i = n; i >= 1; i--) {
-      soma += parseInt(d[n - i]) * pos--;
-      if (pos < 2) pos = 9;
-    }
+    let soma = 0, pos = n - 7;
+    for (let i = n; i >= 1; i--) { soma += parseInt(d[n - i]) * pos--; if (pos < 2) pos = 9; }
     const r = soma % 11;
     return r < 2 ? 0 : 11 - r;
   };
@@ -81,13 +60,7 @@ function Toast({ mensagem, tipo }) {
   );
 }
 
-const ESTADO_INICIAL = {
-  tipo_documento: "CPF",
-  documento: "",
-  nome_razao_social: "",
-  telefone: "",
-  endereco_completo: "",
-};
+const ESTADO_INICIAL = { tipo_documento: "CPF", documento: "", nome_razao_social: "", telefone: "", endereco_completo: "" };
 
 function CadastroCliente({ onCancelar }) {
   const [form, setForm] = useState(ESTADO_INICIAL);
@@ -101,27 +74,17 @@ function CadastroCliente({ onCancelar }) {
   };
 
   const handleTipoDocumento = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      tipo_documento: e.target.value,
-      documento: "",
-    }));
+    setForm((prev) => ({ ...prev, tipo_documento: e.target.value, documento: "" }));
   };
 
   const handleDocumento = (e) => {
     const raw = e.target.value;
-    const mascarado =
-      form.tipo_documento === "CPF"
-        ? aplicarMascaraCPF(raw)
-        : aplicarMascaraCNPJ(raw);
+    const mascarado = form.tipo_documento === "CPF" ? aplicarMascaraCPF(raw) : aplicarMascaraCNPJ(raw);
     setForm((prev) => ({ ...prev, documento: mascarado }));
   };
 
   const handleTelefone = (e) => {
-    setForm((prev) => ({
-      ...prev,
-      telefone: aplicarMascaraTelefone(e.target.value),
-    }));
+    setForm((prev) => ({ ...prev, telefone: aplicarMascaraTelefone(e.target.value) }));
   };
 
   const handleChange = (campo) => (e) => {
@@ -142,10 +105,7 @@ function CadastroCliente({ onCancelar }) {
     try {
       const response = await fetch(`${API_BASE}/api/v1/clientes`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
         body: JSON.stringify({
           tipo_documento: form.tipo_documento,
           documento: form.documento,
@@ -160,12 +120,12 @@ function CadastroCliente({ onCancelar }) {
         exibirToast("Cliente cadastrado com sucesso!", "sucesso");
         setForm(ESTADO_INICIAL);
       } else if (response.status === 409) {
-        exibirToast("Documento ja cadastrado.", "erro");
+        exibirToast("Documento já cadastrado.", "erro");
       } else {
         exibirToast("Erro ao cadastrar. Tente novamente.", "erro");
       }
     } catch {
-      exibirToast("Erro de conexao com o servidor.", "erro");
+      exibirToast("Erro de conexão com o servidor.", "erro");
     } finally {
       setIsSubmitting(false);
     }
@@ -173,282 +133,80 @@ function CadastroCliente({ onCancelar }) {
 
   return (
     <div style={styles.pagina}>
-      {/* Topbar */}
-      <div style={styles.topbar}>
-        <div style={styles.topbarLogo}>
-          <svg viewBox="0 0 40 40" fill="none" style={{ width: 36, height: 36 }}>
-            <circle cx="20" cy="20" r="20" fill="#1a2a5e" />
-            <path d="M12 20 C12 15,16 11,20 11 C24 11,28 15,28 20 C28 25,24 29,20 29 C16 29,12 25,12 20Z"
-              fill="none" stroke="white" strokeWidth="2.5" />
-            <path d="M20 11 L20 8 M20 29 L20 32 M11 20 L8 20 M29 20 L32 20"
-              stroke="white" strokeWidth="2.5" strokeLinecap="round" />
-            <circle cx="20" cy="20" r="3" fill="white" />
-          </svg>
-          <span style={styles.topbarNome}>O FERRAMENTEIRO</span>
-        </div>
-        <span style={styles.topbarTitulo}>Cadastro de Cliente</span>
-        <div style={{ width: 160 }} />
-      </div>
-
-      {/* Card */}
-      <div style={styles.card}>
-
-        {/* Tipo de pessoa */}
-        <div style={styles.tipoPessoaBar}>
-          <span style={styles.tipoPessoaLabel}>Tipo de pessoa</span>
-          <label style={styles.radioLabel}>
-            <input
-              type="radio"
-              name="tipo_documento"
-              value="CPF"
-              checked={form.tipo_documento === "CPF"}
-              onChange={handleTipoDocumento}
-              style={styles.radioInput}
-            />
-            Pessoa Fisica
-          </label>
-          <label style={styles.radioLabel}>
-            <input
-              type="radio"
-              name="tipo_documento"
-              value="CNPJ"
-              checked={form.tipo_documento === "CNPJ"}
-              onChange={handleTipoDocumento}
-              style={styles.radioInput}
-            />
-            Pessoa Juridica
-          </label>
-        </div>
-
-        {/* Campos */}
-        <div style={styles.corpo}>
-
-          <div style={styles.grupo}>
-            <label style={styles.label}>Nome Completo</label>
-            <input
-              style={styles.input}
-              type="text"
-              value={form.nome_razao_social}
-              onChange={handleChange("nome_razao_social")}
-              placeholder={form.tipo_documento === "CPF" ? "Nome completo" : "Razao social"}
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div style={styles.grupo}>
-            <label style={styles.label}>
-              {form.tipo_documento === "CPF" ? "CPF" : "CNPJ"}
+      <div style={styles.container}>
+        <h2 style={styles.tituloPagina}>Cadastro de Cliente</h2>
+        
+        {/* Card */}
+        <div style={styles.card}>
+          <div style={styles.tipoPessoaBar}>
+            <span style={styles.tipoPessoaLabel}>Tipo de pessoa</span>
+            <label style={styles.radioLabel}>
+              <input type="radio" name="tipo_documento" value="CPF" checked={form.tipo_documento === "CPF"} onChange={handleTipoDocumento} style={styles.radioInput} />
+              Pessoa Física
             </label>
-            <input
-              style={styles.input}
-              type="text"
-              value={form.documento}
-              onChange={handleDocumento}
-              placeholder={form.tipo_documento === "CPF" ? "000.000.000-00" : "00.000.000/0000-00"}
-              disabled={isSubmitting}
-            />
+            <label style={styles.radioLabel}>
+              <input type="radio" name="tipo_documento" value="CNPJ" checked={form.tipo_documento === "CNPJ"} onChange={handleTipoDocumento} style={styles.radioInput} />
+              Pessoa Jurídica
+            </label>
           </div>
 
-          <div style={styles.linhaMetade}>
-            <div style={{ ...styles.grupo, flex: 1 }}>
-              <label style={styles.label}>Telefone</label>
-              <input
-                style={styles.input}
-                type="text"
-                value={form.telefone}
-                onChange={handleTelefone}
-                placeholder="(00) 00000-0000"
-                disabled={isSubmitting}
-              />
+          <div style={styles.corpo}>
+            <div style={styles.grupo}>
+              <label style={styles.label}>Nome Completo</label>
+              <input style={styles.input} type="text" value={form.nome_razao_social} onChange={handleChange("nome_razao_social")} placeholder={form.tipo_documento === "CPF" ? "Nome completo" : "Razão social"} disabled={isSubmitting} />
             </div>
-            <div style={{ ...styles.grupo, flex: 1 }}>
-              <label style={styles.label}>Endereco Completo</label>
-              <input
-                style={styles.input}
-                type="text"
-                value={form.endereco_completo}
-                onChange={handleChange("endereco_completo")}
-                placeholder="Rua, numero, bairro, cidade"
-                disabled={isSubmitting}
-              />
+
+            <div style={styles.grupo}>
+              <label style={styles.label}>{form.tipo_documento === "CPF" ? "CPF" : "CNPJ"}</label>
+              <input style={styles.input} type="text" value={form.documento} onChange={handleDocumento} placeholder={form.tipo_documento === "CPF" ? "000.000.000-00" : "00.000.000/0000-00"} disabled={isSubmitting} />
+            </div>
+
+            <div style={styles.linhaMetade}>
+              <div style={{ ...styles.grupo, flex: 1 }}>
+                <label style={styles.label}>Telefone</label>
+                <input style={styles.input} type="text" value={form.telefone} onChange={handleTelefone} placeholder="(00) 00000-0000" disabled={isSubmitting} />
+              </div>
+              <div style={{ ...styles.grupo, flex: 1 }}>
+                <label style={styles.label}>Endereço Completo</label>
+                <input style={styles.input} type="text" value={form.endereco_completo} onChange={handleChange("endereco_completo")} placeholder="Rua, número, bairro, cidade" disabled={isSubmitting} />
+              </div>
             </div>
           </div>
 
-        </div>
-
-        {/* Botoes */}
-        <div style={styles.rodape}>
-          <button
-            style={styles.botaoCancelar}
-            onClick={onCancelar}
-            disabled={isSubmitting}
-          >
-            Cancelar
-          </button>
-          <button
-            style={{
-              ...styles.botaoCadastrar,
-              ...(!formValido || isSubmitting ? styles.botaoDisabled : {}),
-            }}
-            onClick={handleSubmit}
-            disabled={!formValido || isSubmitting}
-          >
-            {isSubmitting ? "Aguarde..." : "Cadastrar"}
-          </button>
+          <div style={styles.rodape}>
+            <button style={styles.botaoCancelar} onClick={onCancelar} disabled={isSubmitting}>Cancelar</button>
+            <button style={{ ...styles.botaoCadastrar, ...(!formValido || isSubmitting ? styles.botaoDisabled : {}) }} onClick={handleSubmit} disabled={!formValido || isSubmitting}>
+              {isSubmitting ? "Aguarde..." : "Cadastrar"}
+            </button>
+          </div>
         </div>
       </div>
-
-      {/* Toast */}
       {toast && <Toast mensagem={toast.mensagem} tipo={toast.tipo} />}
     </div>
   );
 }
 
 const styles = {
-
-  topbar: {
-    backgroundColor: "#FFD600",
-    height: "52px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "0 20px",
-  },
-  topbarLogo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    width: "160px",
-  },
-  topbarNome: {
-    fontWeight: "700",
-    fontSize: "13px",
-    color: "#1a1a1a",
-  },
-  topbarTitulo: {
-    fontWeight: "600",
-    fontSize: "15px",
-    color: "#1a1a1a",
-  },
-  card: {
-    backgroundColor: "#d6d6c8",
-    margin: "24px auto",
-    width: "100%",
-    maxWidth: "680px",
-    borderRadius: "6px",
-    overflow: "hidden",
-    boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-  },
-  tipoPessoaBar: {
-    backgroundColor: "#1a2a5e",
-    display: "flex",
-    alignItems: "center",
-    gap: "24px",
-    padding: "10px 20px",
-  },
-  tipoPessoaLabel: {
-    color: "#FFD600",
-    fontWeight: "700",
-    fontSize: "15px",
-    marginRight: "8px",
-  },
-  radioLabel: {
-    color: "#ffffff",
-    fontSize: "14px",
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-    cursor: "pointer",
-  },
-  radioInput: {
-    accentColor: "#FFD600",
-    width: "14px",
-    height: "14px",
-    cursor: "pointer",
-  },
-  corpo: {
-    padding: "20px 20px 8px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
-  },
-  grupo: {
-    display: "flex",
-    flexDirection: "column",
-    marginBottom: "10px",
-  },
-  label: {
-    fontSize: "13px",
-    color: "#333",
-    fontWeight: "500",
-    marginBottom: "4px",
-  },
-  input: {
-    backgroundColor: "#e8e8d8",
-    border: "none",
-    borderRadius: "3px",
-    padding: "7px 10px",
-    fontSize: "14px",
-    color: "#1a1a1a",
-    outline: "none",
-    width: "100%",
-    boxSizing: "border-box",
-  },
-  linhaMetade: {
-    display: "flex",
-    gap: "16px",
-  },
-  rodape: {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "12px",
-    padding: "12px 20px 20px",
-  },
-  botaoCancelar: {
-    backgroundColor: "#1a2a5e",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "4px",
-    padding: "9px 24px",
-    fontSize: "14px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-  botaoCadastrar: {
-    backgroundColor: "#1a2a5e",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "4px",
-    padding: "9px 24px",
-    fontSize: "14px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "opacity 0.2s",
-  },
-  botaoDisabled: {
-    opacity: 0.45,
-    cursor: "not-allowed",
-  },
-  toast: {
-    position: "fixed",
-    bottom: "28px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    padding: "12px 28px",
-    borderRadius: "6px",
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#fff",
-    boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
-    zIndex: 9999,
-    whiteSpace: "nowrap",
-  },
-  toastSucesso: {
-    backgroundColor: "#27ae60",
-  },
-  toastErro: {
-    backgroundColor: "#c0392b",
-  },
+  pagina: { minHeight: "100vh", backgroundColor: "#f4f4f9", paddingBottom: "40px" },
+  container: { paddingTop: "80px", display: "flex", flexDirection: "column", alignItems: "center", padding: "80px 20px 20px" },
+  tituloPagina: { fontSize: "24px", fontWeight: "700", color: "#1a2a5e", marginBottom: "20px", textAlign: "left", width: "100%", maxWidth: "680px" },
+  card: { backgroundColor: "#d6d6c8", width: "100%", maxWidth: "680px", borderRadius: "6px", overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.12)" },
+  tipoPessoaBar: { backgroundColor: "#1a2a5e", display: "flex", alignItems: "center", gap: "24px", padding: "10px 20px" },
+  tipoPessoaLabel: { color: "#FFD600", fontWeight: "700", fontSize: "15px", marginRight: "8px" },
+  radioLabel: { color: "#ffffff", fontSize: "14px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" },
+  radioInput: { accentColor: "#FFD600", width: "14px", height: "14px", cursor: "pointer" },
+  corpo: { padding: "20px 20px 8px", display: "flex", flexDirection: "column", gap: "4px" },
+  grupo: { display: "flex", flexDirection: "column", marginBottom: "10px" },
+  label: { fontSize: "13px", color: "#333", fontWeight: "500", marginBottom: "4px" },
+  input: { backgroundColor: "#e8e8d8", border: "none", borderRadius: "3px", padding: "7px 10px", fontSize: "14px", color: "#1a1a1a", outline: "none", width: "100%", boxSizing: "border-box" },
+  linhaMetade: { display: "flex", gap: "16px" },
+  rodape: { display: "flex", justifyContent: "flex-end", gap: "12px", padding: "12px 20px 20px" },
+  botaoCancelar: { backgroundColor: "#1a2a5e", color: "#ffffff", border: "none", borderRadius: "4px", padding: "9px 24px", fontSize: "14px", fontWeight: "600", cursor: "pointer" },
+  botaoCadastrar: { backgroundColor: "#1a2a5e", color: "#ffffff", border: "none", borderRadius: "4px", padding: "9px 24px", fontSize: "14px", fontWeight: "600", cursor: "pointer", transition: "opacity 0.2s" },
+  botaoDisabled: { opacity: 0.45, cursor: "not-allowed" },
+  toast: { position: "fixed", bottom: "28px", left: "50%", transform: "translateX(-50%)", padding: "12px 28px", borderRadius: "6px", fontSize: "14px", fontWeight: "600", color: "#fff", boxShadow: "0 4px 16px rgba(0,0,0,0.2)", zIndex: 9999, whiteSpace: "nowrap" },
+  toastSucesso: { backgroundColor: "#27ae60" },
+  toastErro: { backgroundColor: "#c0392b" },
 };
 
 export default CadastroCliente;

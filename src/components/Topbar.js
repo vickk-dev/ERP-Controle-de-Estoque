@@ -1,50 +1,36 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-// IMPORT DESATIVADO TEMPORARIAMENTE PARA EVITAR ECRÃ BRANCO
-// import { Logout } from "./Logout";
+
+// IMPORTANDO AS IMAGENS
+import logoImg from '../imagens/logo.png';
+import imgAluguel from '../imagens/aluguel.png';
+import imgCliente from '../imagens/cliente.png';
+import imgEstoque from '../imagens/estoque.png';
+import imgPedidos from '../imagens/pedidos.png';
+import imgRelatorios from '../imagens/relatorios.png';
 
 function Topbar() {
   const [aberto, setAberto] = useState(false);
-  
-  // FUNÇÃO DESATIVADA TEMPORARIAMENTE
-  // const { logout } = Logout();
 
   const toggleMenu = () => setAberto((prev) => !prev);
 
   return (
     <div style={styles.topbar}>
 
-      {/* NOVO CONTAINER DA LOGO: Vetor SVG idêntico ao do Login + Texto */}
+      {/* CONTAINER DA LOGO: Largura em 'auto' para não espremer o PNG */}
       <Link to="/" style={styles.logoContainer}>
-        <div style={styles.logoIcon}>
-          <svg
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ width: 32, height: 32 }}
-          >
-            <circle cx="20" cy="20" r="20" fill="#1a2a5e" />
-            <path
-              d="M12 20 C12 15, 16 11, 20 11 C24 11, 28 15, 28 20 C28 25, 24 29, 20 29 C16 29, 12 25, 12 20Z"
-              fill="none"
-              stroke="white"
-              strokeWidth="2.5"
-            />
-            <path
-              d="M20 11 L20 8 M20 29 L20 32 M11 20 L8 20 M29 20 L32 20"
-              stroke="white"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-            <circle cx="20" cy="20" r="3" fill="white" />
-          </svg>
-        </div>
-        <span style={styles.logoTexto}>O FERRAMENTEIRO</span>
+        <img 
+          src={logoImg} 
+          alt="Logo O Ferramenteiro" 
+          style={{ height: '45px', width: 'auto', objectFit: 'contain' }} 
+        />
+        {/* Caso a sua imagem de logo já tenha o nome, você pode apagar a linha abaixo. 
+            Deixei com fonte maior caso seja só o ícone. */}
+        <span style={styles.logoTexto}></span>
       </Link>
 
       <div style={styles.direita}>
         <button
-          // onClick={logout} <-- DESATIVADO TEMPORARIAMENTE
           style={styles.logoutBtn}
           title="Sair"
           aria-label="Encerrar sessão"
@@ -59,21 +45,21 @@ function Topbar() {
 
       {aberto && (
         <div style={styles.menu}>
-          {/* MENU COM ÍCONES PADRONIZADOS */}
+          {/* MENU COM IMAGENS - Tamanho fixado em 24x24 */}
           <Link to="/aluguel" style={styles.link} onClick={() => setAberto(false)}>
-            <span style={styles.menuIcon}>📅</span> Aluguel
+            <img src={imgAluguel} alt="Aluguel" style={styles.menuIcon} /> Aluguel
           </Link>
           <Link to="/clientes" style={styles.link} onClick={() => setAberto(false)}>
-            <span style={styles.menuIcon}>👥</span> Clientes
+            <img src={imgCliente} alt="Clientes" style={styles.menuIcon} /> Clientes
           </Link>
           <Link to="/estoque" style={styles.link} onClick={() => setAberto(false)}>
-            <span style={styles.menuIcon}>🔧</span> Estoque
+            <img src={imgEstoque} alt="Estoque" style={styles.menuIcon} /> Estoque
           </Link>
           <Link to="/pedidos" style={styles.link} onClick={() => setAberto(false)}>
-            <span style={styles.menuIcon}>💲</span> Pedidos
+            <img src={imgPedidos} alt="Pedidos" style={styles.menuIcon} /> Pedidos
           </Link>
           <Link to="/relatorio" style={styles.link} onClick={() => setAberto(false)}>
-            <span style={styles.menuIcon}>📊</span> Relatórios
+            <img src={imgRelatorios} alt="Relatórios" style={styles.menuIcon} /> Relatórios
           </Link>
         </div>
       )}
@@ -107,7 +93,7 @@ const styles = {
     position: "fixed",
     top: 0,
     width: "100%",
-    height: "60px",
+    height: "80px", // Aumentei um pouquinho a altura da Topbar pra caber bem a logo
     backgroundColor: "#FFD600",
     display: "flex",
     justifyContent: "space-between",
@@ -115,29 +101,24 @@ const styles = {
     padding: "0 20px",
     boxSizing: "border-box",
     zIndex: 1000,
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)", // Adicionado um sombreado sutil
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)", 
   },
   logoContainer: {
     display: "flex",
     alignItems: "center",
-    gap: "10px",
-    textDecoration: "none", // Remove o sublinhado do link
-  },
-  logoIcon: { 
-    flexShrink: 0,
-    display: "flex",
-    alignItems: "center",
+    gap: "12px",
+    textDecoration: "none",
   },
   logoTexto: {
     fontWeight: "800",
-    fontSize: "18px",
-    color: "#1a1a1a",
+    fontSize: "20px", // Aumentei o tamanho do texto para acompanhar a logo
+    color: "#1a2a5e", // Azul escuro para combinar
     letterSpacing: "0.5px",
   },
   direita: {
     display: "flex",
     alignItems: "center",
-    gap: "12px",
+    gap: "15px",
   },
   logoutBtn: {
     background: "none",
@@ -151,21 +132,22 @@ const styles = {
     transition: "background 0.15s",
   },
   hamburger: {
-    fontSize: "24px",
+    fontSize: "28px",
     cursor: "pointer",
-    userSelect: "none", // Evita que o texto seja selecionado ao clicar
+    userSelect: "none", 
+    color: "#1a2a5e",
   },
   menu: {
     position: "absolute",
-    top: "70px",
+    top: "85px",
     right: "20px",
     backgroundColor: "white",
     borderRadius: "8px",
     boxShadow: "0px 8px 24px rgba(0,0,0,0.15)",
     display: "flex",
     flexDirection: "column",
-    padding: "8px 0", // Espaçamento vertical no menu
-    minWidth: "160px",
+    padding: "10px 0", 
+    minWidth: "180px",
   },
   link: {
     padding: "12px 20px",
@@ -174,12 +156,16 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "12px",
-    fontWeight: "500",
+    fontWeight: "600",
     fontSize: "15px",
     transition: "background-color 0.2s",
   },
   menuIcon: {
-    fontSize: "18px",
+    width: "24px",
+    height: "24px",
+    objectFit: "contain",
+    flexShrink: 0, 
+    filter: "brightness(0) invert(0.15)",
   }
 };
 
