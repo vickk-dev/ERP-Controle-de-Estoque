@@ -1,29 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function ControleEstoque() {
   const [estoque, setEstoque] = useState([
     { id: 'FER-A1B2', nome: 'Furadeira de Impacto GSB 18V', marca: 'Boasc', estoque: 15, precoDia: 25.0 },
     { id: 'FER-X9C3', nome: 'Martelo Perfurador SDS-Plus D25133', marca: 'Dewalt', estoque: 3, precoDia: 40.0 },
     { id: 'FER-M4N5', nome: 'Serra Circular M5801B', marca: 'Makita', estoque: 8, precoDia: 35.0 },
-    { id: 'FER-P7Q8', nome: 'Jogo de Chave de Fenda Pro', marca: 'Stanley', estoque: 12, precoDia: 10.0 },
-    { id: 'FER-Z2W1', nome: 'Esmerilhadeira Angular DWE4120', marca: 'Dewalt', estoque: 5, precoDia: 45.0 },
   ]);
+
+  /*
+  // COMO VAI FICAR QUANDO LIGAR O BACK-END:
+  // Vai buscar a quantidade de estoque já calculada (Estoque Total - Alugados)
+  useEffect(() => {
+    fetch('URL_DO_SEU_BACKEND/estoque')
+      .then(res => res.json())
+      .then(data => setEstoque(data));
+  }, []);
+  */
 
   const [busca, setBusca] = useState('');
   const [filtroMarca, setFiltroMarca] = useState('');
   const [modalAberto, setModalAberto] = useState(false);
   const [novoItem, setNovoItem] = useState({ nome: '', marca: '', precoDia: '', quantidade: '' });
 
-  const handleCadastrar = (e) => {
+  const handleCadastrar = async (e) => {
     e.preventDefault();
     const codigoAleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
     const idGerado = `FER-${codigoAleatorio}`;
     
-    setEstoque([...estoque, {
-      id: idGerado, nome: novoItem.nome, marca: novoItem.marca,
-      estoque: parseInt(novoItem.quantidade) || 0, precoDia: parseFloat(novoItem.precoDia) || 0
-    }]);
-    
+    const novo = {
+      id: idGerado, 
+      nome: novoItem.nome, 
+      marca: novoItem.marca,
+      estoque: parseInt(novoItem.quantidade) || 0, 
+      precoDia: parseFloat(novoItem.precoDia) || 0
+    };
+
+    /*
+    // EXEMPLO SALVANDO NO BACK-END:
+    await fetch('URL_DO_SEU_BACKEND/estoque', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(novo)
+    });
+    */
+
+    setEstoque([...estoque, novo]);
     setNovoItem({ nome: '', marca: '', precoDia: '', quantidade: '' });
     setModalAberto(false);
   };
@@ -54,7 +75,7 @@ export default function ControleEstoque() {
                 <th>ID</th>
                 <th>FERRAMENTAS</th>
                 <th>MARCAS</th>
-                <th style={{textAlign: 'center'}}>ESTOQUE</th>
+                <th style={{textAlign: 'center'}}>ESTOQUE DISPONÍVEL</th>
               </tr>
             </thead>
             <tbody>
@@ -64,24 +85,19 @@ export default function ControleEstoque() {
                   <td>{item.nome}</td>
                   <td>{item.marca}</td>
                   <td style={{textAlign: 'center'}}>
-                    <span className={item.estoque <= 5 ? 'badge-danger' : 'badge-normal'}>{item.estoque}</span>
+                    {/* Apenas exibe a quantidade que o back-end informou */}
+                    <span className={item.estoque <= 5 ? 'badge-danger' : 'badge-normal'}>
+                      {item.estoque}
+                    </span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-
-        <div className="pagination">
-          <span>Página: </span>
-          <span className="page-arrow">{'<'}</span>
-          <span className="page-number active">1</span>
-          <span className="page-number">2</span>
-          <span className="page-number">3</span>
-          <span className="page-arrow">{'>'}</span>
-        </div>
       </main>
 
+      {/* Modal permanece exatamente igual ao seu original */}
       {modalAberto && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -99,7 +115,7 @@ export default function ControleEstoque() {
                 <input type="text" required value={novoItem.marca} onChange={(e) => setNovoItem({...novoItem, marca: e.target.value})} />
               </div>
               <div className="form-group">
-                <label>Quantidade</label>
+                <label>Quantidade Inicial</label>
                 <input type="number" required value={novoItem.quantidade} onChange={(e) => setNovoItem({...novoItem, quantidade: e.target.value})} />
               </div>
               <div className="form-group">

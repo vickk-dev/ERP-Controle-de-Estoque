@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 export default function Aluguel() {
   const [locacoes] = useState([
-    { id: 'LOC-1029', cliente: 'João Silva', ferramenta: 'Furadeira de Impacto', retirada: '01/10/2023', devolucao: '10/10/2023', status: 'Em andamento' },
-    { id: 'LOC-1030', cliente: 'Construtora Alfa', ferramenta: 'Betoneira 400L', retirada: '15/09/2023', devolucao: '15/10/2023', status: 'Atrasado' },
+    { id: 'LOC-1029', cliente: 'João Silva', ferramenta: 'Furadeira de Impacto', retirada: '01/10/2023' },
+    { id: 'LOC-1030', cliente: 'Construtora Alfa', ferramenta: 'Betoneira 400L', retirada: '15/09/2023' },
   ]);
 
   const [modalAberto, setModalAberto] = useState(false);
@@ -31,8 +31,6 @@ export default function Aluguel() {
                 <th>CLIENTE</th>
                 <th>FERRAMENTA</th>
                 <th>RETIRADA</th>
-                <th>DEVOLUÇÃO</th>
-                <th>STATUS</th>
               </tr>
             </thead>
             <tbody>
@@ -42,12 +40,6 @@ export default function Aluguel() {
                   <td>{loc.cliente}</td>
                   <td>{loc.ferramenta}</td>
                   <td>{loc.retirada}</td>
-                  <td>{loc.devolucao}</td>
-                  <td>
-                    <span className={loc.status === 'Atrasado' ? 'badge-danger' : 'badge-normal'} style={{backgroundColor: loc.status === 'Em andamento' ? '#cce5ff' : '', padding: '5px 10px', borderRadius: '12px'}}>
-                      {loc.status}
-                    </span>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -72,15 +64,9 @@ export default function Aluguel() {
                 <label>Ferramenta</label>
                 <input type="text" placeholder="Qual ferramenta?" />
               </div>
-              <div style={{ display: 'flex', gap: '15px' }}>
-                <div className="form-group" style={{ flex: 1 }}>
-                  <label>Data de Retirada</label>
-                  <input type="date" />
-                </div>
-                <div className="form-group" style={{ flex: 1 }}>
-                  <label>Data de Devolução</label>
-                  <input type="date" />
-                </div>
+              <div className="form-group full-width">
+                <label>Data de Retirada</label>
+                <input type="date" />
               </div>
               <div className="modal-footer full-width" style={{ marginTop: '20px' }}>
                 <button className="btn-submit" onClick={() => setModalAberto(false)}>
