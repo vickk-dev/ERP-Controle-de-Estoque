@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from "./AuthContext"; // Para usar o token no backend
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 export default function ControleEstoque() {
+  const { token } = useAuth();
+  
   const [estoque, setEstoque] = useState([
     { id: 'FER-A1B2', nome: 'Furadeira de Impacto GSB 18V', marca: 'Boasc', estoque: 15, precoDia: 25.0 },
     { id: 'FER-X9C3', nome: 'Martelo Perfurador SDS-Plus D25133', marca: 'Dewalt', estoque: 3, precoDia: 40.0 },
@@ -8,13 +13,23 @@ export default function ControleEstoque() {
   ]);
 
   /*
-  // COMO VAI FICAR QUANDO LIGAR O BACK-END:
-  // Vai buscar a quantidade de estoque já calculada (Estoque Total - Alugados)
+  // === BUSCAR DADOS DO BACKEND ===
   useEffect(() => {
-    fetch('URL_DO_SEU_BACKEND/estoque')
-      .then(res => res.json())
-      .then(data => setEstoque(data));
-  }, []);
+    async function carregarEstoque() {
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/estoque`, {
+          headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setEstoque(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar estoque:", error);
+      }
+    }
+    carregarEstoque();
+  }, [token]);
   */
 
   const [busca, setBusca] = useState('');
@@ -24,11 +39,8 @@ export default function ControleEstoque() {
 
   const handleCadastrar = async (e) => {
     e.preventDefault();
-    const codigoAleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const idGerado = `FER-${codigoAleatorio}`;
     
     const novo = {
-      id: idGerado, 
       nome: novoItem.nome, 
       marca: novoItem.marca,
       estoque: parseInt(novoItem.quantidade) || 0, 
@@ -36,15 +48,32 @@ export default function ControleEstoque() {
     };
 
     /*
-    // EXEMPLO SALVANDO NO BACK-END:
-    await fetch('URL_DO_SEU_BACKEND/estoque', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(novo)
-    });
+    // === SALVAR NO BACKEND ===
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/estoque`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(novo)
+      });
+
+      if (response.ok) {
+        const itemCriado = await response.json();
+        // Substitua a linha abaixo pelo item salvo do banco de dados (que terá o ID real)
+        // setEstoque([...estoque, itemCriado]);
+      }
+    } catch (error) {
+       console.error("Erro ao salvar:", error);
+    }
     */
 
+    // Lógica provisória enquanto não há backend
+    const codigoAleatorio = Math.random().toString(36).substring(2, 6).toUpperCase();
+    novo.id = `FER-${codigoAleatorio}`;
     setEstoque([...estoque, novo]);
+
     setNovoItem({ nome: '', marca: '', precoDia: '', quantidade: '' });
     setModalAberto(false);
   };
@@ -55,8 +84,10 @@ export default function ControleEstoque() {
   );
 
   return (
+    // O JSX (Toda a parte visual e o Modal) continua EXATAMENTE IGUAL aqui.
     <div className="app-container">
       <main className="main-content" style={{ marginTop: '80px', padding: '0 20px' }}>
+        {/* ... restante do seu código JSX de Estoque ... */}
         <h2 style={{ color: '#1a2a5e', marginBottom: '20px' }}>CONTROLE DE ESTOQUE</h2>
         
         <div className="actions-bar">
@@ -85,7 +116,6 @@ export default function ControleEstoque() {
                   <td>{item.nome}</td>
                   <td>{item.marca}</td>
                   <td style={{textAlign: 'center'}}>
-                    {/* Apenas exibe a quantidade que o back-end informou */}
                     <span className={item.estoque <= 5 ? 'badge-danger' : 'badge-normal'}>
                       {item.estoque}
                     </span>
@@ -97,7 +127,6 @@ export default function ControleEstoque() {
         </div>
       </main>
 
-      {/* Modal permanece exatamente igual ao seu original */}
       {modalAberto && (
         <div className="modal-overlay">
           <div className="modal-content">

@@ -1,12 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from "./AuthContext";
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 export default function Aluguel() {
-  const [locacoes] = useState([
+  const { token } = useAuth();
+  const [locacoes, setLocacoes] = useState([
     { id: 'LOC-1029', cliente: 'João Silva', ferramenta: 'Furadeira de Impacto', retirada: '01/10/2023' },
     { id: 'LOC-1030', cliente: 'Construtora Alfa', ferramenta: 'Betoneira 400L', retirada: '15/09/2023' },
   ]);
 
   const [modalAberto, setModalAberto] = useState(false);
+  
+  
+  const [novaLocacao, setNovaLocacao] = useState({ cliente: '', ferramenta: '', retirada: '' });
+
+  /*
+  // === BUSCAR LOCAÇÕES DO BACKEND ===
+  useEffect(() => {
+    async function carregarLocacoes() {
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/locacoes`, {
+          headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+        });
+        if(res.ok) {
+           const data = await res.json();
+           setLocacoes(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar locações", error);
+      }
+    }
+    carregarLocacoes();
+  }, [token]);
+  */
+
+  const handleConfirmarLocacao = async (e) => {
+    e.preventDefault();
+
+    /*
+    // === CADASTRAR NOVA LOCAÇÃO NO BACKEND ===
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/locacoes`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(novaLocacao)
+      });
+
+      if (response.ok) {
+        const locacaoCriada = await response.json();
+        // setLocacoes([...locacoes, locacaoCriada]);
+      }
+    } catch (error) {
+       console.error("Erro ao criar locação", error);
+    }
+    */
+
+    // Lógica provisória enquanto não tem backend
+    const nova = {
+      id: `LOC-${Math.floor(Math.random() * 10000)}`,
+      cliente: novaLocacao.cliente,
+      ferramenta: novaLocacao.ferramenta,
+      // Formata data simples
+      retirada: novaLocacao.retirada.split('-').reverse().join('/')
+    };
+    
+    setLocacoes([...locacoes, nova]);
+    setNovaLocacao({ cliente: '', ferramenta: '', retirada: '' });
+    setModalAberto(false);
+  };
 
   return (
     <>
@@ -55,25 +120,43 @@ export default function Aluguel() {
               <button className="close-btn" onClick={() => setModalAberto(false)}>X</button>
             </div>
             
-            <div className="modal-body">
+            {/* Transformei em Form para capturar o Submit e adicionamos os Values */}
+            <form onSubmit={handleConfirmarLocacao} className="modal-body">
               <div className="form-group full-width">
                 <label>Cliente</label>
-                <input type="text" placeholder="Digite o nome do cliente" />
+                <input 
+                  type="text" 
+                  placeholder="Digite o nome do cliente" 
+                  required
+                  value={novaLocacao.cliente}
+                  onChange={(e) => setNovaLocacao({...novaLocacao, cliente: e.target.value})}
+                />
               </div>
               <div className="form-group full-width">
                 <label>Ferramenta</label>
-                <input type="text" placeholder="Qual ferramenta?" />
+                <input 
+                  type="text" 
+                  placeholder="Qual ferramenta?" 
+                  required
+                  value={novaLocacao.ferramenta}
+                  onChange={(e) => setNovaLocacao({...novaLocacao, ferramenta: e.target.value})}
+                />
               </div>
               <div className="form-group full-width">
                 <label>Data de Retirada</label>
-                <input type="date" />
+                <input 
+                  type="date" 
+                  required
+                  value={novaLocacao.retirada}
+                  onChange={(e) => setNovaLocacao({...novaLocacao, retirada: e.target.value})}
+                />
               </div>
               <div className="modal-footer full-width" style={{ marginTop: '20px' }}>
-                <button className="btn-submit" onClick={() => setModalAberto(false)}>
+                <button type="submit" className="btn-submit">
                   + Confirmar Locação
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       )}

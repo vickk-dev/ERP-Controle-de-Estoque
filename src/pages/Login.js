@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImg from '../imagens/logo.png'; // IMPORTANDO A LOGO
+import { useAuth } from "./AuthContext"; 
+import logoImg from '../imagens/logo.png'; 
 
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 const SENHA_MINIMA = 6;
 
 function validarCampos(credenciais, tocados) {
@@ -25,7 +27,9 @@ function Login() {
   const [tocados, setTocados] = useState({ usuario: false, senha: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [erroLocal, setErroLocal] = useState("");
+  
   const navigate = useNavigate();
+  const { salvarSessao } = useAuth(); // Pegando a função de salvar sessão
 
   const erros = validarCampos(credenciais, tocados);
   const isFormValido = credenciais.usuario.trim() !== "" && credenciais.senha.trim() !== "";
@@ -50,13 +54,33 @@ function Login() {
     setIsSubmitting(true);
 
     try {
-      // Simula tempo de rede
+      /* // === INTEGRAÇÃO COM BACKEND (Descomente quando a API estiver pronta) ===
+      const response = await fetch(`${API_BASE}/api/v1/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuario: credenciais.usuario,
+          senha: credenciais.senha
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Credenciais inválidas");
+      }
+
+      const data = await response.json();
+      // Salva o token no AuthContext e localStorage
+      salvarSessao(data.token, data.usuario); 
+      */
+
+      // Simulação temporária enquanto o back não está pronto
       await new Promise((resolve) => setTimeout(resolve, 1500));
+      salvarSessao("token-simulado-temporario", { nome: credenciais.usuario });
       
       // REDIRECIONA PARA O MENU (Rota principal)
       navigate("/", { replace: true });
-    } catch {
-      setErroLocal("Erro ao tentar login.");
+    } catch (error) {
+      setErroLocal(error.message || "Erro ao tentar login.");
     } finally {
       setIsSubmitting(false);
     }
@@ -66,6 +90,7 @@ function Login() {
     <>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <div style={STYLES.fundo}>
+        {/* Restante do JSX mantido intacto... */}
         <div style={STYLES.card}>
           <div style={{ textAlign: "center", marginBottom: "1rem" }}>
             <img src={logoImg} alt="Logo O Ferramenteiro" style={{ width: 72, height: 72, objectFit: 'contain' }} />

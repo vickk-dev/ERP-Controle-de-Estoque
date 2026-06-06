@@ -1,29 +1,57 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from "./AuthContext";
+
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 export default function Pedidos() {
+  const { token } = useAuth();
   const [pedidos, setPedidos] = useState([
-    // Dados temporários enquanto o back-end não está linkado
     { id: 'PED-551', cliente: 'Carlos Andrade', valor: 'R$ 150,00', status: 'Alugado' },
     { id: 'PED-552', cliente: 'Construtora Alfa', valor: 'R$ 3.200,00', status: 'Devolvido' },
   ]);
 
-  /* 
-  // COMO VAI FICAR QUANDO LIGAR O BACK-END:
+  /* // === BUSCAR PEDIDOS DO BACKEND ===
   useEffect(() => {
-    fetch('URL_DO_SEU_BACKEND/pedidos')
-      .then(res => res.json())
-      .then(data => setPedidos(data));
-  }, []);
+    async function carregarPedidos() {
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/pedidos`, {
+          headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+        });
+        if(res.ok) {
+           const data = await res.json();
+           setPedidos(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar pedidos", error);
+      }
+    }
+    carregarPedidos();
+  }, [token]);
   */
 
   const handleDarBaixa = async (idPedido) => {
     /*
-    // 1. O FRONT AVISA O BACK-END QUE FOI DEVOLVIDO:
-    await fetch(`URL_DO_SEU_BACKEND/pedidos/${idPedido}/devolver`, { method: 'PUT' });
-    // O seu back-end automaticamente vai devolver a quantidade para o estoque lá no banco de dados.
+    // === ENVIAR BAIXA PARA O BACKEND ===
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/pedidos/${idPedido}/devolver`, { 
+        method: 'PUT', // ou PATCH
+        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+      });
+
+      if (response.ok) {
+        // Atualiza a tela se o back confirmar
+        const pedidosAtualizados = pedidos.map(ped => {
+          if (ped.id === idPedido) return { ...ped, status: 'Devolvido' };
+          return ped;
+        });
+        setPedidos(pedidosAtualizados);
+      }
+    } catch (error) {
+       console.error("Erro ao dar baixa", error);
+    }
     */
 
-    // 2. ATUALIZAÇÃO VISUAL NO FRONT (para funcionar agora sem o back):
+    // ATUALIZAÇÃO VISUAL PROVISÓRIA (remover depois de ligar o back)
     const pedidosAtualizados = pedidos.map(ped => {
       if (ped.id === idPedido) {
         return { ...ped, status: 'Devolvido' };
@@ -36,6 +64,7 @@ export default function Pedidos() {
   return (
     <>
       <main className="main-content" style={{ marginTop: '80px', padding: '0 20px' }}>
+        {/* Restante do JSX visual intacto... */}
         <h2 style={{ color: '#1a2a5e', marginBottom: '20px' }}>BAIXA DE PEDIDOS (DEVOLUÇÕES)</h2>
         
         <div className="actions-bar">
@@ -63,13 +92,11 @@ export default function Pedidos() {
                   <td>{ped.cliente}</td>
                   <td>{ped.valor}</td>
                   <td>
-                    {/* Muda a cor dependendo se está Alugado ou Devolvido */}
                     <span style={{ color: ped.status === 'Devolvido' ? 'green' : 'orange', fontWeight: 'bold' }}>
                       {ped.status}
                     </span>
                   </td>
                   <td style={{textAlign: 'center'}}>
-                    {/* Só mostra o botão se o status for "Alugado" */}
                     {ped.status === 'Alugado' && (
                       <button 
                         className="btn-add-main" 
