@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // <-- Importamos o useNavigate aqui
 
-// IMPORTANDO AS IMAGENS
 import logoImg from '../imagens/logo.png';
 import imgAluguel from '../imagens/aluguel.png';
 import imgCliente from '../imagens/cliente.png';
@@ -11,29 +10,38 @@ import imgRelatorios from '../imagens/relatorios.png';
 
 function Topbar() {
   const [aberto, setAberto] = useState(false);
+  const navigate = useNavigate(); 
 
   const toggleMenu = () => setAberto((prev) => !prev);
+
+  function handleLogout() {
+
+    localStorage.removeItem("@ERP_Ferramentas:token");
+    
+    navigate("/", { replace: true });
+  }
 
   return (
     <div style={styles.topbar}>
 
-      {/* CONTAINER DA LOGO: Largura em 'auto' para não espremer o PNG */}
-      <Link to="/" style={styles.logoContainer}>
+      {/* CONTAINER DA LOGO: Agora o clique nela leva pro "/menu" */}
+      <Link to="/menu" style={styles.logoContainer}>
         <img 
           src={logoImg} 
           alt="Logo O Ferramenteiro" 
           style={{ height: '45px', width: 'auto', objectFit: 'contain' }} 
         />
-        {/* Caso a sua imagem de logo já tenha o nome, você pode apagar a linha abaixo. 
-            Deixei com fonte maior caso seja só o ícone. */}
         <span style={styles.logoTexto}></span>
       </Link>
 
       <div style={styles.direita}>
+        
+        {/* BOTÃO DA PORTINHA COM A FUNÇÃO DE LOGOUT */}
         <button
           style={styles.logoutBtn}
           title="Sair"
           aria-label="Encerrar sessão"
+          onClick={handleLogout} // <-- Adicionamos o evento de clique aqui
         >
           <LogoutIcon />
         </button>
@@ -93,7 +101,7 @@ const styles = {
     position: "fixed",
     top: 0,
     width: "100%",
-    height: "80px", // Aumentei um pouquinho a altura da Topbar pra caber bem a logo
+    height: "80px", 
     backgroundColor: "#FFD600",
     display: "flex",
     justifyContent: "space-between",
@@ -111,8 +119,8 @@ const styles = {
   },
   logoTexto: {
     fontWeight: "800",
-    fontSize: "20px", // Aumentei o tamanho do texto para acompanhar a logo
-    color: "#1a2a5e", // Azul escuro para combinar
+    fontSize: "20px", 
+    color: "#1a2a5e", 
     letterSpacing: "0.5px",
   },
   direita: {

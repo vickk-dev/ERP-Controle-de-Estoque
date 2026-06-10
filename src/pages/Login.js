@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext"; 
 import logoImg from '../imagens/logo.png'; 
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 const SENHA_MINIMA = 6;
 
 function validarCampos(credenciais, tocados) {
@@ -29,7 +28,7 @@ function Login() {
   const [erroLocal, setErroLocal] = useState("");
   
   const navigate = useNavigate();
-  const { salvarSessao } = useAuth(); // Pegando a função de salvar sessão
+  const { salvarSessao } = useAuth();
 
   const erros = validarCampos(credenciais, tocados);
   const isFormValido = credenciais.usuario.trim() !== "" && credenciais.senha.trim() !== "";
@@ -54,31 +53,19 @@ function Login() {
     setIsSubmitting(true);
 
     try {
-      /* // === INTEGRAÇÃO COM BACKEND (Descomente quando a API estiver pronta) ===
-      const response = await fetch(`${API_BASE}/api/v1/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          usuario: credenciais.usuario,
-          senha: credenciais.senha
-        }),
-      });
+      // Simulação de tempo de requisição para manter a animação do botão
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-      if (!response.ok) {
-        throw new Error("Credenciais inválidas");
+ 
+      if (credenciais.usuario === "Admin" && credenciais.senha === "Mudar@123") {
+        salvarSessao("token-simulado-temporario", { nome: credenciais.usuario });
+        
+        
+        navigate("/menu", { replace: true });
+      } else {
+        throw new Error("Usuário ou senha incorretos.");
       }
-
-      const data = await response.json();
-      // Salva o token no AuthContext e localStorage
-      salvarSessao(data.token, data.usuario); 
-      */
-
-      // Simulação temporária enquanto o back não está pronto
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      salvarSessao("token-simulado-temporario", { nome: credenciais.usuario });
       
-      // REDIRECIONA PARA O MENU (Rota principal)
-      navigate("/", { replace: true });
     } catch (error) {
       setErroLocal(error.message || "Erro ao tentar login.");
     } finally {
@@ -90,12 +77,10 @@ function Login() {
     <>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <div style={STYLES.fundo}>
-        {/* Restante do JSX mantido intacto... */}
         <div style={STYLES.card}>
           <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-            <img src={logoImg} alt="Logo O Ferramenteiro" style={{ width: 72, height: 72, objectFit: 'contain' }} />
+            <img src={logoImg} alt="Logo O Ferramenteiro" style={{ width: 102, height: 102, objectFit: 'contain' }} />
           </div>
-          <h2 style={STYLES.titulo}>O FERRAMENTEIRO</h2>
           <form onSubmit={handleSubmit}>
             <div style={STYLES.field}>
               <label htmlFor="usuario" style={STYLES.label}>Usuário</label>
