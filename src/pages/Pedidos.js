@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "./AuthContext";
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:7131";
 
 export default function Pedidos() {
   const { token } = useAuth();
@@ -10,7 +10,7 @@ export default function Pedidos() {
     { id: 'PED-552', cliente: 'Construtora Alfa', valor: 'R$ 3.200,00', status: 'Devolvido' },
   ]);
 
-  /* // === BUSCAR PEDIDOS DO BACKEND ===
+   // === BUSCAR PEDIDOS DO BACKEND ===
   useEffect(() => {
     async function carregarPedidos() {
       try {
@@ -27,10 +27,10 @@ export default function Pedidos() {
     }
     carregarPedidos();
   }, [token]);
-  */
+  
 
   const handleDarBaixa = async (idPedido) => {
-    /*
+    
     // === ENVIAR BAIXA PARA O BACKEND ===
     try {
       const response = await fetch(`${API_BASE}/api/v1/pedidos/${idPedido}/devolver`, { 
@@ -49,7 +49,7 @@ export default function Pedidos() {
     } catch (error) {
        console.error("Erro ao dar baixa", error);
     }
-    */
+    
 
     // ATUALIZAÇÃO VISUAL PROVISÓRIA (remover depois de ligar o back)
     const pedidosAtualizados = pedidos.map(ped => {

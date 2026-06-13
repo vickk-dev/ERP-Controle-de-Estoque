@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useAuth } from "./AuthContext";
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:7131";
 
 function toISOUTC(dataStr, fim = false) {
   const sufixo = fim ? "T23:59:59.999Z" : "T00:00:00.000Z";
@@ -24,7 +23,6 @@ function RelatorioFaturamento({ onVoltar }) {
   const [contratos, setContratos] = useState(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
-  const { token } = useAuth();
 
   const dataFinalMenor = dataFinal && dataInicial && dataFinal < dataInicial;
   const podeConsultar = dataInicial && dataFinal && !dataFinalMenor && !loading;
@@ -44,7 +42,7 @@ function RelatorioFaturamento({ onVoltar }) {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          
         },
         signal: AbortSignal.timeout(15000),
       });

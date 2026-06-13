@@ -1,9 +1,9 @@
-import { useState, useCallback } from "react";
-import { useAuth } from "./AuthContext";
+import { useState } from "react";
+import axios from "axios";
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
-
-// Mascaras
+// ATENÇÃO: Garanta que a porta da API corresponde ao seu ambiente
+const API_BASE = "http://localhost:8080";
+// --- Máscaras ---
 function aplicarMascaraCPF(valor) {
   return valor.replace(/\D/g, "").slice(0, 11).replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
@@ -18,7 +18,11 @@ function aplicarMascaraTelefone(valor) {
   return digits.replace(/(\d{2})(\d)/, "($1) $2").replace(/(\d{5})(\d{1,4})$/, "$1-$2");
 }
 
-// Validacoes matematicas
+function aplicarMascaraCEP(valor) {
+  return valor.replace(/\D/g, "").slice(0, 8).replace(/(\d{5})(\d{1,3})/, "$1-$2");
+}
+
+// --- Validações ---
 function validarCPF(cpf) {
   const d = cpf.replace(/\D/g, "");
   if (d.length !== 11 || /^(\d)\1+$/.test(d)) return false;
@@ -51,7 +55,7 @@ function documentoValido(tipo, valor) {
   return validarCNPJ(valor);
 }
 
-// Toast
+// --- Componente Toast ---
 function Toast({ mensagem, tipo }) {
   return (
     <div style={{ ...styles.toast, ...(tipo === "sucesso" ? styles.toastSucesso : styles.toastErro) }}>
@@ -60,21 +64,34 @@ function Toast({ mensagem, tipo }) {
   );
 }
 
-const ESTADO_INICIAL = { tipo_documento: "CPF", documento: "", nome_razao_social: "", telefone: "", endereco_completo: "" };
+// O Estado inicial reflete a necessidade real do seu backend
+const ESTADO_INICIAL = { 
+  tipo_documento: "CPF", 
+  documento: "", 
+  nome_razao_social: "", 
+  nome_fantasia: "",
+  telefone: "", 
+  cep: "",
+  numero: "",
+  endereco_completo: "" 
+};
 
 function CadastroCliente({ onCancelar }) {
   const [form, setForm] = useState(ESTADO_INICIAL);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
-  const { token } = useAuth();
 
   const exibirToast = (mensagem, tipo = "sucesso") => {
     setToast({ mensagem, tipo });
     setTimeout(() => setToast(null), 3500);
   };
 
+  const handleChange = (campo) => (e) => {
+    setForm((prev) => ({ ...prev, [campo]: e.target.value }));
+  };
+
   const handleTipoDocumento = (e) => {
-    setForm((prev) => ({ ...prev, tipo_documento: e.target.value, documento: "" }));
+    setForm((prev) => ({ ...prev, tipo_documento: e.target.value, documento: "", nome_fantasia: "" }));
   };
 
   const handleDocumento = (e) => {
@@ -87,45 +104,58 @@ function CadastroCliente({ onCancelar }) {
     setForm((prev) => ({ ...prev, telefone: aplicarMascaraTelefone(e.target.value) }));
   };
 
-  const handleChange = (campo) => (e) => {
-    setForm((prev) => ({ ...prev, [campo]: e.target.value }));
+  const handleCep = (e) => {
+    setForm((prev) => ({ ...prev, cep: aplicarMascaraCEP(e.target.value) }));
   };
 
   const formValido =
     form.nome_razao_social.trim() !== "" &&
     form.documento.trim() !== "" &&
     form.telefone.trim() !== "" &&
-    form.endereco_completo.trim() !== "" &&
+    form.cep.trim() !== "" &&
+    form.numero.trim() !== "" &&
     documentoValido(form.tipo_documento, form.documento);
 
   const handleSubmit = async () => {
     if (!formValido || isSubmitting) return;
     setIsSubmitting(true);
 
+    // O Payload de Integração (Perfeito para o C# CadastrarClienteRequest)
+    const payload = {
+      tipoDocumento: form.tipo_documento,
+      documento: form.documento.replace(/\D/g, ""), // Limpamos a máscara para o banco
+      nomeRazaoSocial: form.nome_razao_social.trim(),
+      nomeFantasia: form.nome_fantasia.trim() || null,
+      telefone: form.telefone.replace(/\D/g, ""),
+      cep: form.cep.replace(/\D/g, ""),
+      numero: form.numero.trim(),
+      enderecoCompleto: form.endereco_completo.trim() || "A preencher" 
+    };
+
     try {
-      const response = await fetch(`${API_BASE}/api/v1/clientes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        body: JSON.stringify({
-          tipo_documento: form.tipo_documento,
-          documento: form.documento,
-          nome_razao_social: form.nome_razao_social.trim(),
-          telefone: form.telefone,
-          endereco_completo: form.endereco_completo.trim(),
-        }),
-        signal: AbortSignal.timeout(10000),
+      // POST com Axios: não precisa de JSON.stringify()
+      await axios.post(`${API_BASE}/api/v1/clientes`, payload, {
+        headers: { 
+          "Content-Type": "application/json"
+        },
+        timeout: 10000 // Substitui o AbortSignal.timeout do fetch
       });
 
-      if (response.status === 201) {
-        exibirToast("Cliente cadastrado com sucesso!", "sucesso");
-        setForm(ESTADO_INICIAL);
-      } else if (response.status === 409) {
-        exibirToast("Documento já cadastrado.", "erro");
-      } else {
-        exibirToast("Erro ao cadastrar. Tente novamente.", "erro");
+      // Se chegou aqui, a requisição deu sucesso (200, 201, etc)
+      exibirToast("Cliente cadastrado com sucesso!", "sucesso");
+      setForm(ESTADO_INICIAL);
+
+    } catch (error) {
+      // O Axios captura todos os erros (4xx e 5xx) e joga para cá
+      if (error.response) {
+        // A API respondeu com um erro
+        if (error.response.status === 409) {
+          exibirToast("Este documento já encontra-se registado.", "erro");
+        } else {
+          console.error("Erro da API:", error.response.data);
+          exibirToast("Erro de validação no servidor. Verifique os dados.", "erro");
+        }
       }
-    } catch {
-      exibirToast("Erro de conexão com o servidor.", "erro");
     } finally {
       setIsSubmitting(false);
     }
@@ -136,7 +166,6 @@ function CadastroCliente({ onCancelar }) {
       <div style={styles.container}>
         <h2 style={styles.tituloPagina}>Cadastro de Cliente</h2>
         
-        {/* Card */}
         <div style={styles.card}>
           <div style={styles.tipoPessoaBar}>
             <span style={styles.tipoPessoaLabel}>Tipo de pessoa</span>
@@ -152,24 +181,42 @@ function CadastroCliente({ onCancelar }) {
 
           <div style={styles.corpo}>
             <div style={styles.grupo}>
-              <label style={styles.label}>Nome Completo</label>
-              <input style={styles.input} type="text" value={form.nome_razao_social} onChange={handleChange("nome_razao_social")} placeholder={form.tipo_documento === "CPF" ? "Nome completo" : "Razão social"} disabled={isSubmitting} />
+              <label style={styles.label}>{form.tipo_documento === "CPF" ? "Nome Completo" : "Razão Social"}</label>
+              <input style={styles.input} type="text" value={form.nome_razao_social} onChange={handleChange("nome_razao_social")} placeholder={form.tipo_documento === "CPF" ? "Digite o nome completo" : "Digite a razão social"} disabled={isSubmitting} />
             </div>
 
-            <div style={styles.grupo}>
-              <label style={styles.label}>{form.tipo_documento === "CPF" ? "CPF" : "CNPJ"}</label>
-              <input style={styles.input} type="text" value={form.documento} onChange={handleDocumento} placeholder={form.tipo_documento === "CPF" ? "000.000.000-00" : "00.000.000/0000-00"} disabled={isSubmitting} />
-            </div>
+            {form.tipo_documento === "CNPJ" && (
+              <div style={styles.grupo}>
+                <label style={styles.label}>Nome Fantasia (Opcional)</label>
+                <input style={styles.input} type="text" value={form.nome_fantasia} onChange={handleChange("nome_fantasia")} placeholder="Nome Fantasia" disabled={isSubmitting} />
+              </div>
+            )}
 
             <div style={styles.linhaMetade}>
+              <div style={{ ...styles.grupo, flex: 1 }}>
+                <label style={styles.label}>{form.tipo_documento === "CPF" ? "CPF" : "CNPJ"}</label>
+                <input style={styles.input} type="text" value={form.documento} onChange={handleDocumento} placeholder={form.tipo_documento === "CPF" ? "000.000.000-00" : "00.000.000/0000-00"} disabled={isSubmitting} />
+              </div>
               <div style={{ ...styles.grupo, flex: 1 }}>
                 <label style={styles.label}>Telefone</label>
                 <input style={styles.input} type="text" value={form.telefone} onChange={handleTelefone} placeholder="(00) 00000-0000" disabled={isSubmitting} />
               </div>
+            </div>
+
+            <div style={styles.linhaMetade}>
               <div style={{ ...styles.grupo, flex: 1 }}>
-                <label style={styles.label}>Endereço Completo</label>
-                <input style={styles.input} type="text" value={form.endereco_completo} onChange={handleChange("endereco_completo")} placeholder="Rua, número, bairro, cidade" disabled={isSubmitting} />
+                <label style={styles.label}>CEP</label>
+                <input style={styles.input} type="text" value={form.cep} onChange={handleCep} placeholder="00000-000" disabled={isSubmitting} />
               </div>
+              <div style={{ ...styles.grupo, flex: 0.5 }}>
+                <label style={styles.label}>Número</label>
+                <input style={styles.input} type="text" value={form.numero} onChange={handleChange("numero")} placeholder="123" disabled={isSubmitting} />
+              </div>
+            </div>
+
+            <div style={styles.grupo}>
+              <label style={styles.label}>Endereço Complementar / Referência</label>
+              <input style={styles.input} type="text" value={form.endereco_completo} onChange={handleChange("endereco_completo")} placeholder="Ex: Apartamento, Bloco, etc." disabled={isSubmitting} />
             </div>
           </div>
 

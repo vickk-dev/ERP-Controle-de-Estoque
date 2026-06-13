@@ -1,76 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from "./AuthContext";
+import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:7131";
 
 export default function Aluguel() {
-  const { token } = useAuth();
-  const [locacoes, setLocacoes] = useState([
-    { id: 'LOC-1029', cliente: 'João Silva', ferramenta: 'Furadeira de Impacto', retirada: '01/10/2023' },
-    { id: 'LOC-1030', cliente: 'Construtora Alfa', ferramenta: 'Betoneira 400L', retirada: '15/09/2023' },
-  ]);
-
+  const [locacoes, setLocacoes] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
-  
-  
   const [novaLocacao, setNovaLocacao] = useState({ cliente: '', ferramenta: '', retirada: '' });
 
-  /*
-  // === BUSCAR LOCAÇÕES DO BACKEND ===
+  // === BUSCAR LOCAÇÕES DO BACKEND (GET) ===
   useEffect(() => {
     async function carregarLocacoes() {
       try {
-        const res = await fetch(`${API_BASE}/api/v1/locacoes`, {
-          headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
-        });
-        if(res.ok) {
-           const data = await res.json();
-           setLocacoes(data);
-        }
+        // Axios faz o GET direto na URL, sem precisar passar headers de token
+        const res = await axios.get(`${API_BASE}/api/v1/locacoes`);
+        setLocacoes(res.data); 
       } catch (error) {
         console.error("Erro ao buscar locações", error);
       }
     }
     carregarLocacoes();
-  }, [token]);
-  */
+  }, []); // <-- Array vazio para carregar apenas 1 vez quando a tela abre
 
+  // === CADASTRAR NOVA LOCAÇÃO NO BACKEND (POST) ===
   const handleConfirmarLocacao = async (e) => {
     e.preventDefault();
 
-    /*
-    // === CADASTRAR NOVA LOCAÇÃO NO BACKEND ===
     try {
-      const response = await fetch(`${API_BASE}/api/v1/locacoes`, {
-        method: 'POST',
+      const response = await axios.post(`${API_BASE}/api/v1/locacoes`, novaLocacao, {
         headers: { 
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify(novaLocacao)
+          'Content-Type': 'application/json' // Apenas dizemos que estamos enviando JSON
+        }
       });
 
-      if (response.ok) {
-        const locacaoCriada = await response.json();
-        // setLocacoes([...locacoes, locacaoCriada]);
-      }
+      const locacaoCriada = response.data; 
+      
+      setLocacoes([...locacoes, locacaoCriada]); 
+      
+      setNovaLocacao({ cliente: '', ferramenta: '', retirada: '' });
+      setModalAberto(false);
+      
     } catch (error) {
        console.error("Erro ao criar locação", error);
+       alert("Erro ao salvar locação no backend.");
     }
-    */
-
-    // Lógica provisória enquanto não tem backend
-    const nova = {
-      id: `LOC-${Math.floor(Math.random() * 10000)}`,
-      cliente: novaLocacao.cliente,
-      ferramenta: novaLocacao.ferramenta,
-      // Formata data simples
-      retirada: novaLocacao.retirada.split('-').reverse().join('/')
-    };
-    
-    setLocacoes([...locacoes, nova]);
-    setNovaLocacao({ cliente: '', ferramenta: '', retirada: '' });
-    setModalAberto(false);
   };
 
   return (
@@ -120,7 +93,6 @@ export default function Aluguel() {
               <button className="close-btn" onClick={() => setModalAberto(false)}>X</button>
             </div>
             
-            {/* Transformei em Form para capturar o Submit e adicionamos os Values */}
             <form onSubmit={handleConfirmarLocacao} className="modal-body">
               <div className="form-group full-width">
                 <label>Cliente</label>
